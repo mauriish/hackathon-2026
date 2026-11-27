@@ -1,0 +1,118 @@
+
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches:
+      - main
+      - development
+      - 'release/**'
+
+  push:
+    branches:
+      - main
+      - development
+      - 'release/**'
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repository-checks:
+    name: Repository Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Obtener repositorio
+        uses: actions/checkout@v4
+
+      - name: Verificar archivos obligatorios
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          required_files=(
+            "AGENTS.md"
+            "README.md"
+            ".gitignore"
+            ".env.example"
+            ".opencode/skills/development/SKILL.md"
+            ".opencode/skills/git-workflow/SKILL.md"
+            ".opencode/skills/testing/SKILL.md"
+            ".opencode/skills/code-review/SKILL.md"
+            ".opencode/skills/documentation/SKILL.md"
+          )
+
+          for file in "${required_files[@]}"; do
+            if [[ ! -s "$file" ]]; then
+              echo "::error::Archivo faltante o vacío: $file"
+              exit 1
+            fi
+
+            echo "Verificado: $file"
+          done
+
+      - name: Verificar archivos de entorno versionados
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          while IFS= read -r -d '' file; do
+            filename="${file##*/}"
+
+            case "$filename" in
+              .env.example|.env.*.example)
+                ;;
+              .env|.env.*)
+                echo "::error::Archivo de entorno no permitido: $file"
+                exit 1
+                ;;
+            esac
+          done < <(git ls-files -z)
+
+      - name: Detectar marcadores de conflictos
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git grep -n -I -E '^(<{7} |={7}$|>{7} )'; then
+            echo "::error::Posibles conflictos de Git sin resolver"
+            exit 1
+          else
+            status=$?
+            if [[ "$status" -ne 1 ]]; then
+              exit "$status"
+            fi
+          fi
+
+      - name: Informar alcance de las validaciones
+        run: |
+          echo "Validaciones estructurales completadas."
+          echo "::notice::Las validaciones del código requieren definir el stack tecnológico."
+
+  # Agregar cuando se defina el stack:
+  #
+  # lint:
+  #   Validación estática del código.
+  #
+  # type-check:
+  #   Comprobación de tipos.
+  #
+  # build:
+  #   Compilación o construcción del proyecto.
+  #
+  # unit-tests:
+  #   Ejecución de pruebas unitarias.
+  #
+  # integration-tests:
+  #   Ejecución de pruebas de integración.
+  #
+  # e2e-tests:
+  #   Ejecución de pruebas end-to-end, si corresponde.
