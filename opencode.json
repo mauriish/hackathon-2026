@@ -1,0 +1,113 @@
+
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "*": "ask",
+    "read": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.env.example": "allow",
+      "*.env.*.example": "allow",
+      "*.pem": "deny",
+      "*.key": "deny"
+    },
+    "edit": {
+      "*": "allow",
+      "*.env": "ask",
+      "*.env.*": "ask",
+      "*.env.example": "allow",
+      "*.env.*.example": "allow",
+      "*AGENTS.md": "ask",
+      "*.opencode/skills/*": "ask",
+      "*.github/workflows/*": "ask",
+      "*opencode.json": "ask",
+      "*opencode.jsonc": "ask"
+    },
+    "glob": "allow",
+    "grep": "allow",
+    "list": "allow",
+    "question": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "external_directory": "ask",
+    "doom_loop": "ask",
+    "skill": {
+      "*": "ask",
+      "development": "allow",
+      "git-workflow": "allow",
+      "testing": "allow",
+      "code-review": "allow",
+      "documentation": "allow"
+    },
+    "bash": {
+      "*": "ask",
+
+      "git status*": "allow",
+      "git diff*": "allow",
+      "git log*": "allow",
+      "git show*": "allow",
+      "git branch --show-current": "allow",
+      "git branch -vv": "allow",
+      "git remote -v": "allow",
+      "git fetch origin*": "allow",
+      "git ls-files*": "allow",
+      "git check-ignore*": "allow",
+      "git rev-parse*": "allow",
+      "git --version": "allow",
+
+      "git switch -c feature/*": "allow",
+      "git checkout -b feature/*": "allow",
+      "git add *": "allow",
+      "git add .": "ask",
+      "git add -A*": "ask",
+      "git add --all*": "ask",
+      "git commit -m *": "allow",
+
+      "git push*": "ask",
+      "git push origin feature/*": "allow",
+      "git push -u origin feature/*": "allow",
+
+      "gh issue view*": "allow",
+      "gh issue list*": "allow",
+      "gh pr view*": "allow",
+      "gh pr list*": "allow",
+      "gh pr diff*": "allow",
+      "gh pr checks*": "allow",
+      "gh pr create*": "allow",
+      "gh run view*": "allow",
+      "gh run list*": "allow",
+
+      "git merge*": "ask",
+      "git rebase*": "ask",
+      "git reset*": "ask",
+      "git restore*": "ask",
+      "git clean*": "ask",
+
+      "git reset --hard*": "deny",
+      "git push*--force*": "deny",
+      "git push* -f*": "deny",
+      "git push*--delete*": "deny",
+      "git push*--mirror*": "deny",
+      "git push*--no-verify*": "deny",
+      "git commit*--no-verify*": "deny",
+      "git push* main*": "deny",
+      "git push* master*": "deny",
+      "git push* development*": "deny",
+      "git push* release/*": "deny",
+      "git push*:main*": "deny",
+      "git push*:master*": "deny",
+      "git push*:development*": "deny",
+      "git push*:release/*": "deny",
+      "git branch -D*": "deny",
+      "git branch -d*": "deny",
+
+      "gh pr merge*": "deny",
+      "gh pr review*": "deny",
+      "gh issue close*": "deny",
+      "gh repo delete*": "deny",
+      "gh secret*": "deny",
+      "sudo*": "deny"
+    }
+  }
+}

@@ -1,0 +1,93 @@
+
+# ==================================================
+# Seguridad y variables de entorno
+# ==================================================
+
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# ==================================================
+# Archivos del sistema operativo
+# ==================================================
+
+# Windows
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+.directory
+.Trash-*
+
+# ==================================================
+# Editores e IDE
+# ==================================================
+
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+
+# ==================================================
+# Archivos temporales y respaldos
+# ==================================================
+
+*.tmp
+*.temp
+*.bak
+*.orig
+*.log
+
+# ==================================================
+# Caché local
+# ==================================================
+
+.cache/
+
+# ==================================================
+# Resultados de testing y cobertura
+# ==================================================
+
+coverage/
+.coverage
+.coverage.*
+htmlcov/
+test-results/
+playwright-report/
+
+# ==================================================
+# OpenCode
+# ==================================================
+
+# Conservar las instrucciones compartidas del proyecto.
+# No ignorar AGENTS.md ni .opencode/skills/.
+
+# ==================================================
+# Stack tecnológico
+# ==================================================
+
+# Agregar las exclusiones específicas del lenguaje,
+# framework, gestor de paquetes y herramientas
+# cuando se defina el stack tecnológico.
