@@ -1,5 +1,5 @@
 
-# AGENTS.md — Hackathon 2026
+# AGENTS.md — Instrucciones del repositorio
 
 ## 1. Contexto y principios
 
@@ -73,6 +73,30 @@ para dar seguimiento al progreso. No marcar una tarea como
 terminada antes de su integración y validación.
 
 ## 4. Reglas obligatorias de calidad
+
+### Propiedad modular y colaboración
+
+| Rutas | Responsable |
+|---|---|
+| `apps/web/` | `saulfsd98-cloud` — frontend y UI/UX |
+| `services/api/` | `ivanrome2303` — backend y base de datos |
+| `services/ai/` | `Chedooo` — ingeniería de IA |
+| `packages/security/`, `tests/` | `aguillonmarthaguadalupe-lab` — QA y seguridad |
+| `contracts/`, `docs/`, `.github/` y configuración compartida | `mauriish` — liderazgo y arquitectura |
+
+Cada integrante mantiene las pruebas unitarias y documentación de su módulo.
+`tests/` contiene las pruebas generales de integración, seguridad y E2E.
+Los módulos se comunican mediante contratos publicados en `contracts/`;
+no se deben acoplar a implementaciones internas de otros módulos.
+
+- Limitar los cambios a la propiedad asignada y conservar cambios ajenos.
+- Para modificar un módulo ajeno, solicitarlo mediante una Issue o PR,
+  explicar el motivo e involucrar a su propietario y a `mauriish`.
+- No modificar unilateralmente contratos, archivos compartidos, Skills,
+  permisos ni workflows; solicitar revisión y autorización antes del cambio.
+- CODEOWNERS asigna revisores y no otorga ni restringe por sí solo permisos
+  de escritura. Los límites también dependen de las reglas administrativas de
+  GitHub y de los checks de CI.
 
 ### Código
 

@@ -55,6 +55,12 @@ Contiene los cambios correspondientes a una tarea específica.
 
 Cada feature deberá originarse desde su release correspondiente.
 
+Las promociones se realizan mediante PR: `feature/vN/nombre` hacia
+`release/vN`, releases seleccionados hacia `development` y `development`
+hacia `main`. No crear ramas sin autorización ni realizar esas promociones
+autónomamente. Para cambios en módulos ajenos, solicitar autorización y la
+revisión de sus propietarios; CODEOWNERS no es una autorización de escritura.
+
 El agente únicamente podrá trabajar y realizar push
 sobre la feature asignada.
 

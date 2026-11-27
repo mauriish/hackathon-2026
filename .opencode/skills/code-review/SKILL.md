@@ -68,6 +68,12 @@ Verificar:
 - Cambios que puedan afectar el trabajo de otros integrantes.
 - Dependencias circulares o innecesarias.
 - Alteraciones injustificadas de configuraciones globales.
+- Cambios que excedan la propiedad asignada o modifiquen unilateralmente
+  contratos y configuración compartida.
+
+Para cambios transversales, verificar que exista justificación y revisión de
+los propietarios afectados. CODEOWNERS solicita revisiones, pero no es una
+frontera de autorización de escritura.
 
 ### Calidad y mantenibilidad
 

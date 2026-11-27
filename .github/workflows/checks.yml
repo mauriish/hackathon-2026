@@ -43,6 +43,9 @@ jobs:
             "README.md"
             ".gitignore"
             ".env.example"
+            ".github/CODEOWNERS"
+            ".github/scripts/authorize_paths.py"
+            "tests/security/test_authorize_paths.py"
             ".opencode/skills/development/SKILL.md"
             ".opencode/skills/git-workflow/SKILL.md"
             ".opencode/skills/testing/SKILL.md"
@@ -91,6 +94,9 @@ jobs:
               exit "$status"
             fi
           fi
+
+      - name: Probar autorización de rutas
+        run: python3 -m unittest discover -s tests/security -p 'test_*.py' -v
 
       - name: Informar alcance de las validaciones
         run: |
