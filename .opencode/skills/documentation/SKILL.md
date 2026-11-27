@@ -245,6 +245,10 @@ Por lo tanto:
 - Evitar reorganizaciones innecesarias.
 - Evitar cambios masivos de formato.
 - No eliminar información relevante sin justificación.
+- Respetar la propiedad de módulos y solicitar revisión del propietario
+  afectado antes de cambiar documentación de otra área o documentación común.
+- Mantener las pruebas unitarias y documentación específica junto al módulo;
+  reservar `tests/` para documentación de pruebas generales.
 
 Cada rama deberá documentar el estado de la versión
 del producto a la que pertenece.

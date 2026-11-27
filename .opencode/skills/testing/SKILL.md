@@ -36,6 +36,10 @@ Antes de crear o ejecutar pruebas:
 
 Respetar las convenciones existentes.
 
+Cada módulo mantiene sus pruebas unitarias junto a su área; `tests/` se reserva
+para integración, seguridad y E2E generales. Las pruebas entre módulos deben
+verificar contratos públicos, no acceder a detalles internos ajenos.
+
 No introducir frameworks de testing adicionales
 sin autorización humana.
 

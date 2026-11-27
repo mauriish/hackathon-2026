@@ -1,0 +1,20 @@
+# Propietario predeterminado para archivos compartidos y rutas nuevas.
+* @mauriish
+
+# Propiedad de módulos: reglas específicas posteriores prevalecen.
+/apps/web/ @saulfsd98-cloud
+/services/api/ @ivanrome2303
+/services/ai/ @Chedooo
+/packages/security/ @aguillonmarthaguadalupe-lab
+/tests/ @aguillonmarthaguadalupe-lab
+
+# Contratos, documentación y configuración compartida.
+/contracts/ @mauriish
+/docs/ @mauriish
+/.github/ @mauriish
+/AGENTS.md @mauriish
+/.opencode/ @mauriish
+/opencode.json @mauriish
+/opencode.jsonc @mauriish
+/.gitignore @mauriish
+/.env.example @mauriish

@@ -249,6 +249,13 @@ Por lo tanto:
 - Comunicar incompatibilidades y dependencias entre tareas.
 - Evitar cambios globales que dificulten la integración.
 
+Respetar además la propiedad modular definida en `AGENTS.md` y en los
+`AGENTS.md` locales. Las pruebas unitarias y documentación específica son
+responsabilidad de cada módulo. Para cambios fuera del área asignada, proponer
+la modificación mediante Issue o PR, justificarla y obtener revisión del
+propietario y de `mauriish`; no modificarla unilateralmente. Comunicar cambios
+entre componentes mediante contratos publicados en `contracts/`.
+
 Cuando exista un conflicto entre implementaciones,
 no elegir arbitrariamente una solución que descarte
 el trabajo de otro integrante.
