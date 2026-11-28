@@ -27,6 +27,16 @@ información sensible.
 del cambio. No copia el contenido del reporte. El historial se elimina al
 eliminarse el reporte.
 
+## Catálogo de identidades oficiales
+
+La migración `002_create_official_identities.sql` carga los registros curados
+de H26-36 en `official_identities`, junto con su sector, fuente, fecha de
+verificación y observaciones. `list_official_identities` devuelve el catálogo;
+`get_official_identity` busca un dominio exacto y devuelve `None` si no se
+encuentra. La búsqueda no infiere subdominios ni considera que un dominio
+registrado garantice que un mensaje o sus enlaces sean seguros. El dominio
+primario evita duplicados.
+
 Con `API_DATABASE_URL` configurada, el proceso API inicia una tarea que purga
 identificadores expirados al arrancar y cada hora. Si la base no está disponible,
 el error queda registrado y se reintenta en un minuto; la tarea no impide que
