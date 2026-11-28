@@ -64,6 +64,7 @@ def has_valid_dynamic_weights(check: dict[str, Any]) -> bool:
         ("AnalysisRequest", "analysis-request.valid.json"),
         ("AiAssessment", "ai-assessment.valid.json"),
         ("Evidence", "evidence.valid.json"),
+        ("OfficialDomainCatalog", "official-domain-catalog.valid.json"),
         ("Check", "check.valid.json"),
         ("Check", "check-inconclusive.valid.json"),
         ("ApiError", "api-error.valid.json"),
@@ -81,6 +82,7 @@ def test_valid_examples_match_their_contract(contract_name: str, filename: str) 
         ("AnalysisRequest", "analysis-request.invalid.json"),
         ("AiAssessment", "ai-assessment.invalid.json"),
         ("Evidence", "evidence.invalid.json"),
+        ("OfficialDomainCatalog", "official-domain-catalog.invalid.json"),
         ("Check", "check.invalid.json"),
         ("ApiError", "api-error.invalid.json"),
     ],
@@ -101,6 +103,7 @@ def test_schema_document_is_valid_json_schema() -> None:
         "analysis-request.valid.json",
         "ai-assessment.valid.json",
         "evidence.valid.json",
+        "official-domain-catalog.valid.json",
         "check.valid.json",
         "check-inconclusive.valid.json",
         "api-error.valid.json",
@@ -222,6 +225,7 @@ def test_openapi_references_the_shared_contract_schemas() -> None:
         "AiAssessment",
         "Evidence",
         "RatingSignal",
+        "OfficialDomainCatalog",
         "ProviderStatus",
         "Check",
         "ApiError",
@@ -229,3 +233,18 @@ def test_openapi_references_the_shared_contract_schemas() -> None:
         reference = schemas[name]["$ref"]
         assert reference.startswith("../schemas/v1/contracts.schema.json#/$defs/")
         assert reference.endswith(f"/{name}")
+
+
+def test_official_domain_catalog_is_unique_and_uses_normalized_hosts() -> None:
+    catalog = load_example("official-domain-catalog.valid.json")
+    domains = catalog["domains"]
+
+    assert len(domains) == len(set(domains))
+    assert all(domain == domain.lower() and "://" not in domain for domain in domains)
+
+
+def test_official_domain_catalog_rejects_duplicate_hosts() -> None:
+    catalog = load_example("official-domain-catalog.valid.json")
+    catalog["domains"] = ["nasa.gov", "nasa.gov"]
+
+    assert not validator_for("OfficialDomainCatalog").is_valid(catalog)

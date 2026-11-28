@@ -58,6 +58,9 @@
       "RatingSignal": {
         "$ref": "../schemas/v1/contracts.schema.json#/$defs/RatingSignal"
       },
+      "OfficialDomainCatalog": {
+        "$ref": "../schemas/v1/contracts.schema.json#/$defs/OfficialDomainCatalog"
+      },
       "ProviderStatus": {
         "$ref": "../schemas/v1/contracts.schema.json#/$defs/ProviderStatus"
       },

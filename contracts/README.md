@@ -59,6 +59,16 @@ reporte saneado se conserva para reintento. Las fallas de Safe Browsing, RDAP o
 DNS solo marcan esa fuente como no disponible y no implican que el destino sea
 seguro.
 
+### Catálogo de dominios oficiales (propuesta H26-29)
+
+`OfficialDomainCatalog` publica una lista sin duplicados de hosts ASCII
+normalizados en minúsculas, sin esquema, puerto ni punto final. La interfaz
+consumidora puede pasar `domains` como colección al clasificador de identidad,
+que compara hosts exactos; los subdominios solo coinciden si están incluidos
+explícitamente. Un host ausente o desconocido no constituye por sí solo
+evidencia de fraude. El ejemplo válido contiene datos mínimos curados del
+catálogo H26-10; no define persistencia ni un endpoint HTTP.
+
 `ReportSubmission` es una entrada transitoria y puede contener datos sensibles.
 El backend debe redactar nombres, teléfonos, correos, nombres de usuario,
 direcciones, datos financieros, credenciales y tokens antes de persistir el

@@ -9,6 +9,7 @@
     { "$ref": "#/$defs/AiAssessment" },
     { "$ref": "#/$defs/Evidence" },
     { "$ref": "#/$defs/RatingSignal" },
+    { "$ref": "#/$defs/OfficialDomainCatalog" },
     { "$ref": "#/$defs/Check" },
     { "$ref": "#/$defs/ApiError" }
   ],
@@ -267,6 +268,26 @@
           }
         }
       ]
+    },
+    "OfficialDomainCatalog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_type", "domains"],
+      "properties": {
+        "contract_type": { "const": "OfficialDomainCatalog" },
+        "domains": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 253,
+            "pattern": "^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)(?:\\.(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?))*$",
+            "description": "Host ASCII normalizado en minúsculas, sin esquema, puerto ni punto final. Cada entrada representa un host exacto; los subdominios deben incluirse por separado."
+          }
+        }
+      },
+      "description": "Colección pública mínima de hosts oficiales para comparación exacta. La ausencia de un host no demuestra fraude."
     },
     "ProviderStatus": {
       "type": "object",

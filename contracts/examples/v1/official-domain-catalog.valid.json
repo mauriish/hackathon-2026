@@ -1,0 +1,15 @@
+{
+  "contract_type": "OfficialDomainCatalog",
+  "domains": [
+    "nasa.gov",
+    "cdc.gov",
+    "fda.gov",
+    "who.int",
+    "un.org",
+    "harvard.edu",
+    "jpmorganchase.com",
+    "energy.gov",
+    "england.nhs.uk",
+    "amtrak.com"
+  ]
+}
