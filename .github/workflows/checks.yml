@@ -98,6 +98,11 @@ jobs:
       - name: Probar autorización de rutas
         run: python3 -m unittest discover -s tests/security -p 'test_*.py' -v
 
+      - name: Verificar dataset de evaluación H26-33
+        run: |
+          python3 -m pip install -r contracts/requirements-test.txt
+          python3 -m pytest tests/evaluation -q
+
       - name: Informar alcance de las validaciones
         run: |
           echo "Validaciones estructurales completadas."
