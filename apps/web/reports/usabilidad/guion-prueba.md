@@ -40,7 +40,7 @@ anonimizada. No dar pistas antes de registrar la primera respuesta.
 | T2 | «Explica qué significan las tres señales, la confianza y las recomendaciones.» | Encuentra Comunidad, IA e Identidad, lee la confianza y menciona al menos una recomendación segura. |
 | T3 | «Compara el resultado sin conclusión con el de señales en conflicto y dime si alguno significa que el mensaje es seguro.» | Distingue ambos estados y responde que ninguno garantiza seguridad. |
 | T4 | «En Protect, decide qué hacer con el mensaje recibido y explica de dónde viene.» | Identifica **Simulación** y **Demo**, ve el mensaje ficticio y elige una acción de verificación sin abrir enlaces reales. |
-| T5 | «Reporta el caso sin dejar datos de contacto y comprueba qué ocurre con el envío.» | Completa el asistente sin contacto, marca el consentimiento y la verificación simulada, y entiende que no se envía nada. |
+| T5 | «Reporta el caso sin dejar datos de contacto y comprueba qué ocurre con el envío.» | Completa el asistente sin contacto, confirma los datos extraídos, pulsa «Soy una persona» y entiende que no se envía nada. |
 
 ## Preguntas de comprensión
 

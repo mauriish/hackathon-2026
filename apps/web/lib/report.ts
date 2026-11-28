@@ -25,6 +25,22 @@ export type ReportSubmission = {
  */
 export const DEMO_TURNSTILE_TOKEN = "demo-token-no-verificado";
 
+/**
+ * Datos que la demostración presenta como extraídos del mensaje del usuario.
+ * Comparten la forma del borrador para no introducir un contrato nuevo.
+ */
+export type ReportExtraction = ReportDraft;
+
+export function buildDemoExtraction(draft: ReportDraft): ReportExtraction {
+  return {
+    targetKind: draft.targetKind,
+    targetValue: draft.targetValue.trim(),
+    message: draft.message.trim(),
+    context: draft.context.trim(),
+    contact: draft.contact.trim(),
+  };
+}
+
 const LINK_PATTERN =
   /^(?:https?:\/\/[^/@?#]+(?:\/[^?#]*)?|[^:/@?#]+(?:\/[^?#]*)?)$/;
 
@@ -54,9 +70,9 @@ export function validateTarget(
   return null;
 }
 
-function buildContext(draft: ReportDraft): string {
-  const parts = [draft.context.trim()];
-  const contact = draft.contact.trim();
+function buildContext(extraction: ReportExtraction): string {
+  const parts = [extraction.context.trim()];
+  const contact = extraction.contact.trim();
 
   if (contact.length > 0) {
     parts.push(`Contacto opcional: ${contact}`);
@@ -65,15 +81,17 @@ function buildContext(draft: ReportDraft): string {
   return parts.filter(Boolean).join("\n");
 }
 
-export function buildReportSubmission(draft: ReportDraft): ReportSubmission {
+export function buildReportSubmission(
+  extraction: ReportExtraction,
+): ReportSubmission {
   return {
     contract_type: "ReportSubmission",
     target: {
-      kind: draft.targetKind,
-      value: draft.targetValue.trim(),
+      kind: extraction.targetKind,
+      value: extraction.targetValue.trim(),
     },
-    message: draft.message.trim(),
-    context: buildContext(draft),
+    message: extraction.message.trim(),
+    context: buildContext(extraction),
     turnstile_token: DEMO_TURNSTILE_TOKEN,
   };
 }
