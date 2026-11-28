@@ -8,6 +8,3 @@ junto a cada módulo; las interfaces compartidas se mantienen en `contracts/`.
 
 - [Despliegue del entorno de pruebas](deployment.md): configuración y smoke
   test de la API en Render para `release/v1`, variables, costos y limitaciones.
-- [Presentación y demostración](demo.md): pitch, recorrido reproducible,
-  comprobación disponible, métricas del ensayo y límites de `release/v1`.
-- [Arquitectura y decisiones tecnológicas](architecture.md).
