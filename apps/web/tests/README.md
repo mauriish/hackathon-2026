@@ -12,8 +12,11 @@ npm run test:e2e
 Cubren navegación entre Check, Report y Protect, ausencia de Watch, teclado,
 viewport móvil, validación del mensaje, error controlado con reintento, los
 tres escenarios de resultado, los tres ratings con su etiqueta accesible, la
-confianza, la evidencia y la distinción entre no concluyente y conflicto. También
-cubren el asistente de reportes: validación de pasos, avisos de privacidad,
-evidencia y contacto opcionales, navegación hacia atrás y confirmación de
-demostración. `report-contract.spec.ts` comprueba sin navegador la construcción
-de `ReportSubmission` y sus validadores.
+confianza, la evidencia y la distinción entre no concluyente y conflicto.
+`protect-simulator.spec.ts` cubre los cuatro escenarios sintéticos, la etiqueta
+de simulación, la ausencia de permisos y SMS reales, el estado de carga, el
+error con reintento y el paso del escenario por alerta, acompañamiento, Check y
+Report. También cubren el asistente de reportes: validación de pasos, avisos de
+privacidad, evidencia y contacto opcionales, navegación hacia atrás y
+confirmación de demostración. `report-contract.spec.ts` comprueba sin navegador
+la construcción de `ReportSubmission` y sus validadores.
