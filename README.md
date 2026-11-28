@@ -8,9 +8,14 @@ aplicaciones corresponde a las Issues asignadas.
 
 Actualmente, el repositorio contiene las instrucciones de colaboración,
 configuración de OpenCode, skills de trabajo, una plantilla de variables de
-entorno y validaciones estructurales de CI. Las aplicaciones todavía no se han
-inicializado, por lo que aún no hay comandos de instalación, compilación o
-pruebas propios de ellas.
+entorno y validaciones estructurales de CI. La API mínima de `services/api/`
+está inicializada y cuenta con `GET /health`; el entorno de pruebas de
+`release/v1` está desplegado en Render. El frontend y el flujo completo de
+análisis con IA aún no están integrados en esta release.
+
+Consulta la [guía de despliegue](docs/deployment.md) para la configuración y
+las comprobaciones del entorno de pruebas. Los comandos de instalación y
+pruebas de la API están en [`services/api/README.md`](services/api/README.md).
 
 ## Stack tecnológico
 
@@ -150,10 +155,11 @@ Las skills disponibles en `.opencode/skills/` cubren:
 
 El workflow `.github/workflows/checks.yml` se ejecuta en Pull Requests y pushes
 a `main`, `development` y ramas `release/**`, y también puede iniciarse
-manualmente. Comprueba archivos requeridos, archivos de entorno versionados y
-marcadores de conflictos. Las validaciones de lint, tipos, build y pruebas se
-añadirán de forma gradual mediante las Issues asignadas, conforme se
-inicialicen las aplicaciones y haya comandos verificables.
+manualmente. Comprueba archivos requeridos, archivos de entorno versionados,
+marcadores de conflictos y autorización de rutas. Todavía no ejecuta lint,
+verificación de tipos, build ni pruebas de la API; esas validaciones se
+incorporarán mediante las Issues correspondientes cuando se acuerden sus
+comandos.
 
 `.github/workflows/ownership.yml` valida PR hacia `main`, `development` y
 `release/**`. `Repository Checks` y `ownership-authorization` son checks
