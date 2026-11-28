@@ -10,5 +10,6 @@ python -m pytest packages/security/tests -q
 
 Los relojes y los verificadores externos se sustituyen por dobles de prueba,
 por lo que las pruebas no dependen de la hora real, de la red ni de servicios
-externos. Cada prueba crea su propio limitador y verifier, sin estado
-compartido.
+externos. Cada prueba crea su propio limitador, verifier y deduplicador, sin
+estado compartido. Las pruebas de deduplicación usan datos ficticios ya
+saneados y no consultan bases de datos ni servicios externos.
