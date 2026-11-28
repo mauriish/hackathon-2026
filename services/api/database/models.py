@@ -1,7 +1,7 @@
-"""Modelos internos de persistencia alineados con el contrato ReportRecord."""
+"""Modelos internos de persistencia del servicio API."""
 
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from enum import StrEnum
 from typing import Literal
 from uuid import UUID
@@ -84,3 +84,16 @@ class StoredReport(BaseModel):
     sanitized_message: str = Field(min_length=1)
     sanitized_context: str
     status: ReportStatus
+
+
+class OfficialIdentity(BaseModel):
+    """Identidad de organización incluida en el catálogo de dominios oficiales."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    organization: str = Field(min_length=1)
+    domain: str = Field(min_length=1)
+    sector: str = Field(min_length=1)
+    source_url: str = Field(min_length=1)
+    verified_at: date
+    notes: str | None = None

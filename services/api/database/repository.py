@@ -8,7 +8,7 @@ from uuid import UUID
 import psycopg
 from psycopg.rows import dict_row
 
-from .models import ReportRecord, ReportStatus, StoredReport
+from .models import OfficialIdentity, ReportRecord, ReportStatus, StoredReport
 
 
 def connect(database_url: str) -> psycopg.Connection[dict[str, Any]]:
@@ -95,6 +95,49 @@ def get_report(
         sanitized_context=row["sanitized_context"],
         status=row["status"],
     )
+
+
+def list_official_identities(
+    connection: psycopg.Connection[dict[str, Any]],
+) -> list[OfficialIdentity]:
+    """Devuelve el catálogo curado de identidades oficiales."""
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT organization, domain, sector, source_url, verified_at, notes
+            FROM official_identities
+            ORDER BY domain
+            """
+        )
+        rows = cursor.fetchall()
+
+    return [OfficialIdentity.model_validate(row) for row in rows]
+
+
+def get_official_identity(
+    connection: psycopg.Connection[dict[str, Any]], domain: str
+) -> OfficialIdentity | None:
+    """Busca un dominio exacto; devuelve None cuando no está en el catálogo.
+
+    Los nombres DNS no distinguen mayúsculas y pueden representarse con un
+    punto final. No se infieren subdominios ni se aceptan URLs completas.
+    """
+    normalized_domain = domain.strip().lower().removesuffix(".")
+    if not normalized_domain:
+        return None
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT organization, domain, sector, source_url, verified_at, notes
+            FROM official_identities
+            WHERE domain = %s
+            """,
+            (normalized_domain,),
+        )
+        row = cursor.fetchone()
+
+    return OfficialIdentity.model_validate(row) if row is not None else None
 
 
 def update_report_status(
