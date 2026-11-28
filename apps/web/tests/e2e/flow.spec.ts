@@ -30,6 +30,36 @@ test("el inicio lleva a Check y muestra la pantalla de revisión", async ({
   ).toBeVisible();
 });
 
+test("valida el mensaje antes de revisar", async ({ page }) => {
+  await page.goto("/check/revisar");
+
+  const submit = page.getByRole("button", { name: "Revisar mensaje" });
+  const message = page.getByLabel("Mensaje, correo electrónico o enlace");
+
+  await expect(submit).toBeDisabled();
+
+  await message.fill("   ");
+  await expect(submit).toBeDisabled();
+
+  await message.fill("Mensaje de prueba para revisar.");
+  await expect(submit).toBeEnabled();
+});
+
+test("muestra el error controlado y permite reintentar", async ({ page }) => {
+  await page.goto("/check/revisar?estado=error&escenario=moderado");
+
+  await expect(
+    page.getByRole("heading", { name: "No pudimos revisar el mensaje" }),
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "Volver a intentar" }).click();
+
+  await expect(page).toHaveURL(/\/check\/revisar\?escenario=moderado$/);
+  await expect(
+    page.getByRole("heading", { name: "Vamos a revisar si es seguro" }),
+  ).toBeVisible();
+});
+
 test("muestra los tres resultados según el escenario", async ({ page }) => {
   const scenarios = [
     { level: "alto", title: "¡Atención! Posible fraude" },
