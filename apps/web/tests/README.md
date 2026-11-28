@@ -10,4 +10,5 @@ npm run test:e2e
 ```
 
 Cubren navegación entre Check, Report y Protect, ausencia de Watch, teclado,
-viewport móvil y los tres escenarios de resultado.
+viewport móvil, validación del mensaje, error controlado con reintento y los
+tres escenarios de resultado.
