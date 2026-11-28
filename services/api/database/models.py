@@ -1,4 +1,4 @@
-"""Modelos internos de persistencia alineados con el contrato ReportRecord."""
+"""Modelos internos de persistencia del servicio API."""
 
 import re
 from datetime import date, datetime, timedelta, timezone
