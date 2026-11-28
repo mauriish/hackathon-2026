@@ -1,0 +1,18 @@
+{
+  "contract_type": "AiAssessment",
+  "risk_score": 65,
+  "risk_level": "riesgo_alto",
+  "confidence": "media",
+  "summary": "El mensaje crea urgencia para inducir una acción.",
+  "indicators": ["Urgencia"],
+  "evidence": [
+    {
+      "evidence_id": "ai-evidence-1",
+      "source": "report",
+      "description": "El texto presiona a la persona para actuar.",
+      "excerpt": "verifica ahora"
+    }
+  ],
+  "recommendations": ["Verifica la solicitud por un canal oficial."],
+  "language": "es"
+}
