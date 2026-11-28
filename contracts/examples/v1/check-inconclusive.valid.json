@@ -1,0 +1,33 @@
+{
+  "contract_type": "Check",
+  "check_id": "4c31c82f-029b-4623-9fde-24d26b8f4575",
+  "report_id": "6f4e1e5e-44b8-4ec3-a4cf-41c76a7fdf29",
+  "status": "inconclusive",
+  "risk_score": null,
+  "risk_level": "no_concluyente",
+  "confidence": "baja",
+  "summary": "No fue posible obtener información suficiente para concluir el análisis.",
+  "indicators": [],
+  "evidence": [],
+  "recommendations": ["Intenta nuevamente más tarde."],
+  "ai_assessment": null,
+  "signals": {
+    "community": { "status": "unavailable", "score": null, "weight": 0 },
+    "ai": { "status": "unavailable", "score": null, "weight": 0 },
+    "identity": { "status": "unavailable", "score": null, "weight": 0 }
+  },
+  "providers": [
+    {
+      "provider": "gemini",
+      "status": "unavailable",
+      "error": {
+        "contract_type": "ApiError",
+        "code": "provider_unavailable",
+        "message": "El análisis no está disponible temporalmente.",
+        "retryable": true,
+        "provider": "gemini"
+      }
+    }
+  ],
+  "language": "es"
+}

@@ -1,0 +1,21 @@
+{
+  "contract_type": "Check",
+  "check_id": "4c31c82f-029b-4623-9fde-24d26b8f4575",
+  "report_id": "6f4e1e5e-44b8-4ec3-a4cf-41c76a7fdf29",
+  "status": "completed",
+  "risk_score": 19,
+  "risk_level": "riesgo_alto",
+  "confidence": "alta",
+  "summary": "Ejemplo inválido: el nivel no corresponde al puntaje.",
+  "indicators": [],
+  "evidence": [],
+  "recommendations": [],
+  "ai_assessment": null,
+  "signals": {
+    "community": { "status": "available", "score": 19, "weight": 0.5 },
+    "ai": { "status": "unavailable", "score": null, "weight": 0 },
+    "identity": { "status": "available", "score": 19, "weight": 0.5 }
+  },
+  "providers": [],
+  "language": "es"
+}

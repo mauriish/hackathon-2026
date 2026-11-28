@@ -1,0 +1,11 @@
+{
+  "contract_type": "AiAssessment",
+  "risk_score": 65,
+  "risk_level": "riesgo_alto",
+  "confidence": "media",
+  "summary": "El mensaje crea urgencia para inducir una acción.",
+  "indicators": [],
+  "evidence": [],
+  "recommendations": [],
+  "language": "en"
+}
