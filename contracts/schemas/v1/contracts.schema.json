@@ -1,0 +1,469 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Contratos compartidos Quick Falcon v1",
+  "description": "Esquemas compartidos para reportes, análisis, valoraciones y errores. El objeto raíz identifica el tipo mediante contract_type.",
+  "oneOf": [
+    { "$ref": "#/$defs/ReportSubmission" },
+    { "$ref": "#/$defs/ReportRecord" },
+    { "$ref": "#/$defs/AnalysisRequest" },
+    { "$ref": "#/$defs/AiAssessment" },
+    { "$ref": "#/$defs/Evidence" },
+    { "$ref": "#/$defs/RatingSignal" },
+    { "$ref": "#/$defs/Check" },
+    { "$ref": "#/$defs/ApiError" }
+  ],
+  "$defs": {
+    "Target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["app", "link"]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Nombre de la aplicación o destino reportado. Antes de persistir o consultar terceros, normalizarlo y retirar credenciales, parámetros y fragmentos."
+        }
+      }
+    },
+    "SanitizedTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["app", "link"]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Destino saneado para persistencia y consultas externas."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "link" } }, "required": ["kind"] },
+          "then": {
+            "properties": {
+              "value": {
+                "pattern": "^(?:https?://[^/@?#]+(?:/[^?#]*)?|[^:/@?#]+(?:/[^?#]*)?)$",
+                "description": "No incluye credenciales, parámetros ni fragmentos."
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ReportSubmission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_type", "target", "message", "context", "turnstile_token"],
+      "properties": {
+        "contract_type": { "const": "ReportSubmission" },
+        "target": { "$ref": "#/$defs/Target" },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Texto del reporte recibido de la persona. Puede contener datos sensibles; es transitorio hasta la redacción."
+        },
+        "context": {
+          "type": "string",
+          "description": "Contexto general aportado con el reporte; redactar información sensible antes de persistir o enviarlo a Gemini."
+        },
+        "turnstile_token": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Token transitorio validado exclusivamente por la API. Nunca persistirlo ni enviarlo a Gemini."
+        }
+      }
+    },
+    "ReportRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_type",
+        "report_id",
+        "created_at",
+        "target",
+        "sanitized_message",
+        "sanitized_context",
+        "abuse_id",
+        "abuse_id_expires_at",
+        "status"
+      ],
+      "properties": {
+        "contract_type": { "const": "ReportRecord" },
+        "report_id": { "type": "string", "format": "uuid" },
+        "created_at": { "type": "string", "format": "date-time" },
+        "target": { "$ref": "#/$defs/SanitizedTarget" },
+        "sanitized_message": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Mensaje redactado; se conserva mientras siga siendo útil y sujeto a revisión periódica."
+        },
+        "sanitized_context": { "type": "string" },
+        "abuse_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Seudónimo HMAC estable como máximo 14 días. No es la IP y no debe compartirse con IA ni frontend."
+        },
+        "abuse_id_expires_at": { "type": "string", "format": "date-time" },
+        "status": {
+          "type": "string",
+          "enum": ["received", "processing", "completed", "rejected", "failed"]
+        }
+      }
+    },
+    "AnalysisRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["message", "context"],
+      "properties": {
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Mensaje saneado, sin nombres, teléfonos, correos, nombres de usuario, direcciones, datos financieros, credenciales ni tokens."
+        },
+        "context": {
+          "type": "string",
+          "description": "Solo contexto general saneado. No incluir IP, abuso_id, token Turnstile ni credenciales."
+        }
+      }
+    },
+    "AiAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_type",
+        "risk_score",
+        "risk_level",
+        "confidence",
+        "summary",
+        "indicators",
+        "evidence",
+        "recommendations",
+        "language"
+      ],
+      "properties": {
+        "contract_type": { "const": "AiAssessment" },
+        "risk_score": { "type": ["integer", "null"], "minimum": 0, "maximum": 100 },
+        "risk_level": {
+          "type": "string",
+          "enum": [
+            "riesgo_alto",
+            "riesgo_moderado",
+            "sin_senales_importantes",
+            "no_concluyente"
+          ]
+        },
+        "confidence": { "type": "string", "enum": ["baja", "media", "alta"] },
+        "summary": { "type": "string", "minLength": 1 },
+        "indicators": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Evidence" }
+        },
+        "recommendations": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "language": { "const": "es" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "risk_level": { "const": "no_concluyente" } },
+            "required": ["risk_level"]
+          },
+          "then": { "properties": { "risk_score": { "type": "null" } } }
+        },
+        {
+          "if": {
+            "properties": { "risk_level": { "const": "riesgo_alto" } },
+            "required": ["risk_level"]
+          },
+          "then": { "properties": { "risk_score": { "minimum": 60 } } }
+        },
+        {
+          "if": {
+            "properties": { "risk_level": { "const": "riesgo_moderado" } },
+            "required": ["risk_level"]
+          },
+          "then": {
+            "properties": {
+              "risk_score": { "minimum": 20, "exclusiveMaximum": 60 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "risk_level": { "const": "sin_senales_importantes" } },
+            "required": ["risk_level"]
+          },
+          "then": {
+            "properties": {
+              "risk_score": { "minimum": 0, "exclusiveMaximum": 20 }
+            }
+          }
+        }
+      ]
+    },
+    "Evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_id", "source", "description"],
+      "properties": {
+        "evidence_id": { "type": "string", "minLength": 1 },
+        "source": {
+          "type": "string",
+          "enum": [
+            "report",
+            "community",
+            "ai",
+            "identity",
+            "google_safe_browsing",
+            "rdap",
+            "dns"
+          ]
+        },
+        "description": { "type": "string", "minLength": 1 },
+        "excerpt": {
+          "type": "string",
+          "description": "Fragmento saneado que sustenta el hallazgo; nunca incluir datos personales o secretos."
+        }
+      }
+    },
+    "RatingSignal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "score", "weight"],
+      "properties": {
+        "status": { "type": "string", "enum": ["available", "unavailable"] },
+        "score": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "weight": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "unavailable" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "score": { "type": "null" },
+              "weight": { "const": 0 }
+            }
+          },
+          "else": {
+            "properties": { "score": { "type": "integer", "minimum": 0, "maximum": 100 } }
+          }
+        }
+      ]
+    },
+    "ProviderStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "status"],
+      "properties": {
+        "provider": {
+          "type": "string",
+          "enum": ["gemini", "google_safe_browsing", "rdap", "dns"]
+        },
+        "status": { "type": "string", "enum": ["available", "unavailable"] },
+        "error": { "$ref": "#/$defs/ApiError" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "unavailable" } }, "required": ["status"] },
+          "then": { "required": ["error"] }
+        }
+      ]
+    },
+    "Check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_type",
+        "check_id",
+        "report_id",
+        "status",
+        "risk_score",
+        "risk_level",
+        "confidence",
+        "summary",
+        "indicators",
+        "evidence",
+        "recommendations",
+        "signals",
+        "providers",
+        "language"
+      ],
+      "properties": {
+        "contract_type": { "const": "Check" },
+        "check_id": { "type": "string", "format": "uuid" },
+        "report_id": { "type": "string", "format": "uuid" },
+        "status": { "type": "string", "enum": ["completed", "inconclusive", "failed"] },
+        "risk_score": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": [
+            "riesgo_alto",
+            "riesgo_moderado",
+            "sin_senales_importantes",
+            "no_concluyente"
+          ]
+        },
+        "confidence": { "type": "string", "enum": ["baja", "media", "alta"] },
+        "summary": { "type": "string", "minLength": 1 },
+        "indicators": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Evidence" }
+        },
+        "recommendations": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "ai_assessment": {
+          "oneOf": [
+            { "$ref": "#/$defs/AiAssessment" },
+            { "type": "null" }
+          ]
+        },
+        "signals": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["community", "ai", "identity"],
+          "properties": {
+            "community": { "$ref": "#/$defs/RatingSignal" },
+            "ai": { "$ref": "#/$defs/RatingSignal" },
+            "identity": { "$ref": "#/$defs/RatingSignal" }
+          }
+        },
+        "providers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ProviderStatus" }
+        },
+        "language": { "const": "es" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "risk_level": { "const": "no_concluyente" } },
+            "required": ["risk_level"]
+          },
+          "then": {
+            "properties": {
+              "risk_score": { "type": "null" },
+              "status": { "enum": ["inconclusive", "failed"] }
+            }
+          },
+          "else": {
+            "properties": {
+              "risk_score": { "type": "number", "minimum": 0, "maximum": 100 },
+              "status": { "const": "completed" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "risk_level": { "const": "riesgo_alto" } },
+            "required": ["risk_level"]
+          },
+          "then": { "properties": { "risk_score": { "minimum": 60 } } }
+        },
+        {
+          "if": {
+            "properties": { "risk_level": { "const": "riesgo_moderado" } },
+            "required": ["risk_level"]
+          },
+          "then": {
+            "properties": {
+              "risk_score": { "minimum": 20, "exclusiveMaximum": 60 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "risk_level": { "const": "sin_senales_importantes" } },
+            "required": ["risk_level"]
+          },
+          "then": {
+            "properties": {
+              "risk_score": { "minimum": 0, "exclusiveMaximum": 20 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "providers": {
+                "contains": {
+                  "properties": {
+                    "provider": { "const": "gemini" },
+                    "status": { "const": "unavailable" }
+                  },
+                  "required": ["provider", "status"]
+                }
+              }
+            },
+            "required": ["providers"]
+          },
+          "then": {
+            "properties": {
+              "status": { "enum": ["inconclusive", "failed"] },
+              "risk_score": { "type": "null" },
+              "risk_level": { "const": "no_concluyente" },
+              "ai_assessment": { "type": "null" }
+            }
+          }
+        }
+      ]
+    },
+    "ApiError": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_type", "code", "message", "retryable"],
+      "properties": {
+        "contract_type": { "const": "ApiError" },
+        "code": {
+          "type": "string",
+          "enum": [
+            "invalid_report",
+            "turnstile_rejected",
+            "turnstile_unavailable",
+            "provider_unavailable",
+            "provider_invalid_response",
+            "rate_limited",
+            "internal_error"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Mensaje seguro para el consumidor; no incluir secretos, tokens ni datos personales."
+        },
+        "retryable": { "type": "boolean" },
+        "provider": {
+          "type": "string",
+          "enum": ["turnstile", "gemini", "google_safe_browsing", "rdap", "dns"]
+        }
+      }
+    }
+  }
+}
