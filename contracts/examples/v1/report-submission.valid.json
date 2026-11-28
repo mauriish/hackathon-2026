@@ -1,0 +1,10 @@
+{
+  "contract_type": "ReportSubmission",
+  "target": {
+    "kind": "link",
+    "value": "https://cuenta-ejemplo.invalid/acceso"
+  },
+  "message": "Recibí un mensaje que pide verificar mi cuenta mediante este enlace.",
+  "context": "Mensaje recibido por una aplicación de mensajería.",
+  "turnstile_token": "token-de-prueba-no-real"
+}

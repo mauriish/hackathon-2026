@@ -1,0 +1,71 @@
+{
+  "contract_type": "Check",
+  "check_id": "4c31c82f-029b-4623-9fde-24d26b8f4575",
+  "report_id": "6f4e1e5e-44b8-4ec3-a4cf-41c76a7fdf29",
+  "status": "completed",
+  "risk_score": 70,
+  "risk_level": "riesgo_alto",
+  "confidence": "alta",
+  "summary": "El mensaje combina urgencia con una solicitud para verificar una cuenta.",
+  "indicators": [
+    "Urgencia para actuar",
+    "Solicitud de acceso mediante enlace"
+  ],
+  "evidence": [
+    {
+      "evidence_id": "evidence-1",
+      "source": "report",
+      "description": "El mensaje solicita verificar la cuenta.",
+      "excerpt": "pide verificar mi cuenta"
+    },
+    {
+      "evidence_id": "evidence-2",
+      "source": "google_safe_browsing",
+      "description": "La fuente externa reportó el destino como sospechoso."
+    }
+  ],
+  "recommendations": [
+    "No abras el enlace ni compartas credenciales.",
+    "Verifica la solicitud desde el canal oficial de la organización."
+  ],
+  "ai_assessment": {
+    "contract_type": "AiAssessment",
+    "risk_score": 70,
+    "risk_level": "riesgo_alto",
+    "confidence": "alta",
+    "summary": "El mensaje usa urgencia para inducir una acción.",
+    "indicators": ["Urgencia"],
+    "evidence": [
+      {
+        "evidence_id": "ai-evidence-1",
+        "source": "report",
+        "description": "El texto presiona a la persona para actuar.",
+        "excerpt": "verificar mi cuenta"
+      }
+    ],
+    "recommendations": ["No compartas credenciales."],
+    "language": "es"
+  },
+  "signals": {
+    "community": { "status": "available", "score": 80, "weight": 0.25 },
+    "ai": { "status": "available", "score": 70, "weight": 0.5 },
+    "identity": { "status": "available", "score": 60, "weight": 0.25 }
+  },
+  "providers": [
+    { "provider": "gemini", "status": "available" },
+    { "provider": "google_safe_browsing", "status": "available" },
+    {
+      "provider": "rdap",
+      "status": "unavailable",
+      "error": {
+        "contract_type": "ApiError",
+        "code": "provider_unavailable",
+        "message": "La fuente RDAP no está disponible temporalmente.",
+        "retryable": true,
+        "provider": "rdap"
+      }
+    },
+    { "provider": "dns", "status": "available" }
+  ],
+  "language": "es"
+}
