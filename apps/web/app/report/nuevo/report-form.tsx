@@ -3,25 +3,29 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import Link from "next/link";
 import { CircleCheckBig, ImagePlus, Mic } from "lucide-react";
+import { SimpleCaptcha } from "@/components/simple-captcha";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
+import type { CaptchaStatus } from "@/lib/captcha";
 import {
+  buildDemoExtraction,
   buildReportSubmission,
   validateMessage,
   validateTarget,
   type ReportDraft,
+  type ReportExtraction,
   type ReportSubmission,
   type ReportTargetKind,
 } from "@/lib/report";
+import { cn } from "@/lib/utils";
 
 const STEP_TITLES = [
   "Cuéntanos qué pasó",
   "Destino y evidencia",
-  "Datos opcionales y revisión",
+  "Revisa y confirma",
 ] as const;
 
 const TOTAL_STEPS = STEP_TITLES.length;
@@ -34,14 +38,22 @@ const initialDraft: ReportDraft = {
   contact: "",
 };
 
+const initialExtraction = buildDemoExtraction(initialDraft);
+
 export function ReportForm() {
   const [stepIndex, setStepIndex] = useState(0);
   const [draft, setDraft] = useState<ReportDraft>(initialDraft);
+  const [extraction, setExtraction] =
+    useState<ReportExtraction>(initialExtraction);
+  const [originalExtraction, setOriginalExtraction] =
+    useState<ReportExtraction>(initialExtraction);
   const [messageError, setMessageError] = useState<string | null>(null);
   const [targetError, setTargetError] = useState<string | null>(null);
+  const [extractionError, setExtractionError] = useState<string | null>(null);
   const [reviewError, setReviewError] = useState<string | null>(null);
-  const [consent, setConsent] = useState(false);
-  const [verified, setVerified] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
+  const [captchaStatus, setCaptchaStatus] = useState<CaptchaStatus>("idle");
+  const [captchaKey, setCaptchaKey] = useState(0);
   const [fileName, setFileName] = useState<string | null>(null);
   const [submission, setSubmission] = useState<ReportSubmission | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -54,11 +66,33 @@ export function ReportForm() {
 
   function goToStep(nextStep: number) {
     setReviewError(null);
+    setExtractionError(null);
+    setConfirmed(false);
+    setCaptchaStatus("idle");
+    setCaptchaKey((current) => current + 1);
     setStepIndex(nextStep);
   }
 
   function updateDraft(partial: Partial<ReportDraft>) {
     setDraft((current) => ({ ...current, ...partial }));
+  }
+
+  function invalidateConfirmation() {
+    setConfirmed(false);
+    setCaptchaStatus("idle");
+    setCaptchaKey((current) => current + 1);
+  }
+
+  function updateExtraction(partial: Partial<ReportExtraction>) {
+    setExtraction((current) => ({ ...current, ...partial }));
+    setExtractionError(null);
+    invalidateConfirmation();
+  }
+
+  function restoreExtraction() {
+    setExtraction(originalExtraction);
+    setExtractionError(null);
+    invalidateConfirmation();
   }
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
@@ -81,30 +115,61 @@ export function ReportForm() {
       const error = validateTarget(draft.targetKind, draft.targetValue);
       setTargetError(error);
       if (!error) {
+        const detected = buildDemoExtraction(draft);
+        setExtraction(detected);
+        setOriginalExtraction(detected);
         goToStep(2);
       }
       return;
     }
 
-    if (!consent || !verified) {
+    const dataError =
+      validateMessage(extraction.message) ??
+      validateTarget(extraction.targetKind, extraction.targetValue);
+
+    if (dataError) {
+      setExtractionError(dataError);
+      return;
+    }
+
+    if (captchaStatus === "pending") {
+      setReviewError("Estamos verificando. Espera un momento antes de enviar.");
+      return;
+    }
+
+    if (!confirmed) {
+      setReviewError("Confirma que los datos son correctos antes de enviar.");
+      return;
+    }
+
+    if (captchaStatus === "error") {
       setReviewError(
-        "Marca el consentimiento y la verificación simulada para enviar el reporte.",
+        "La comprobación no se pudo completar. Prueba otra vez antes de enviar.",
       );
+      return;
+    }
+
+    if (captchaStatus !== "verified") {
+      setReviewError("Completa la comprobación sencilla antes de enviar.");
       return;
     }
 
     // El envío real requiere la API de reportes. En la demostración solo se
     // construye el contrato ReportSubmission en memoria.
-    setSubmission(buildReportSubmission(draft));
+    setSubmission(buildReportSubmission(extraction));
   }
 
   function resetForm() {
     setDraft(initialDraft);
+    setExtraction(initialExtraction);
+    setOriginalExtraction(initialExtraction);
     setMessageError(null);
     setTargetError(null);
+    setExtractionError(null);
     setReviewError(null);
-    setConsent(false);
-    setVerified(false);
+    setConfirmed(false);
+    setCaptchaStatus("idle");
+    setCaptchaKey((current) => current + 1);
     setFileName(null);
     setSubmission(null);
     setStepIndex(0);
@@ -421,99 +486,179 @@ export function ReportForm() {
                   tabIndex={-1}
                   className="text-2xl leading-snug font-semibold text-petroleum outline-none"
                 >
-                  ¿Cómo podemos contactarte o identificar el caso?
+                  Revisa y corrige los datos
                 </h2>
                 <p className="text-lg leading-8 text-info">
-                  Puedes ayudarnos a ubicar el caso o dejarlo vacío. Tú decides.
+                  Estos son los datos que encontramos en tu mensaje. Si algo no
+                  está bien, puedes cambiarlo antes de enviar.
                 </p>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="reporte-contacto" className="text-base">
-                  Correo o teléfono (opcional)
-                </Label>
-                <input
-                  id="reporte-contacto"
-                  type="text"
-                  autoComplete="off"
-                  inputMode="text"
-                  value={draft.contact}
-                  onChange={(event) => {
-                    updateDraft({ contact: event.target.value });
-                    setReviewError(null);
-                  }}
-                  placeholder="ejemplo@correo.com o 600 000 000"
-                  className="min-h-12 w-full rounded-xl border border-input bg-white px-3 text-base text-ink placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-                  aria-describedby="reporte-contacto-ayuda"
-                />
-                <p
-                  id="reporte-contacto-ayuda"
-                  className="rounded-2xl bg-soft-green/70 p-4 text-lg leading-8 text-ink"
+              <fieldset className="space-y-4 rounded-2xl border border-dashed border-soft-green bg-soft-green/40 p-4">
+                <legend className="px-2 text-lg font-semibold text-petroleum">
+                  Datos del reporte
+                </legend>
+
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="reporte-extraccion-mensaje"
+                    className="text-base"
+                  >
+                    Mensaje que recibiste
+                  </Label>
+                  <Textarea
+                    id="reporte-extraccion-mensaje"
+                    value={extraction.message}
+                    onChange={(event) =>
+                      updateExtraction({ message: event.target.value })
+                    }
+                    className="min-h-36 resize-y rounded-2xl bg-white text-base"
+                    aria-invalid={
+                      extractionError && extraction.message.trim().length === 0
+                        ? true
+                        : undefined
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="reporte-extraccion-tipo"
+                    className="text-base"
+                  >
+                    ¿Dónde lo viste?
+                  </Label>
+                  <select
+                    id="reporte-extraccion-tipo"
+                    value={extraction.targetKind}
+                    onChange={(event) =>
+                      updateExtraction({
+                        targetKind: event.target.value as ReportTargetKind,
+                      })
+                    }
+                    className="min-h-12 w-full rounded-xl border border-input bg-white px-3 text-base text-ink focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                  >
+                    <option value="link">En un enlace</option>
+                    <option value="app">En una aplicación</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="reporte-extraccion-destino"
+                    className="text-base"
+                  >
+                    {extraction.targetKind === "link"
+                      ? "Enlace que quieres reportar"
+                      : "Nombre de la aplicación"}
+                  </Label>
+                  <input
+                    id="reporte-extraccion-destino"
+                    type="text"
+                    inputMode={
+                      extraction.targetKind === "link" ? "url" : "text"
+                    }
+                    value={extraction.targetValue}
+                    onChange={(event) =>
+                      updateExtraction({ targetValue: event.target.value })
+                    }
+                    placeholder={
+                      extraction.targetKind === "link"
+                        ? "https://ejemplo.com/acceso"
+                        : "Nombre de la aplicación"
+                    }
+                    className="min-h-12 w-full rounded-xl border border-input bg-white px-3 text-base text-ink placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="reporte-extraccion-contexto"
+                    className="text-base"
+                  >
+                    Texto del mensaje o contexto (opcional)
+                  </Label>
+                  <Textarea
+                    id="reporte-extraccion-contexto"
+                    value={extraction.context}
+                    onChange={(event) =>
+                      updateExtraction({ context: event.target.value })
+                    }
+                    className="min-h-24 resize-y rounded-2xl bg-white text-base"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="reporte-contacto" className="text-base">
+                    Correo o teléfono (opcional)
+                  </Label>
+                  <input
+                    id="reporte-contacto"
+                    type="text"
+                    autoComplete="off"
+                    inputMode="text"
+                    value={extraction.contact}
+                    onChange={(event) =>
+                      updateExtraction({ contact: event.target.value })
+                    }
+                    placeholder="ejemplo@correo.com o 600 000 000"
+                    className="min-h-12 w-full rounded-xl border border-input bg-white px-3 text-base text-ink placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                    aria-describedby="reporte-contacto-ayuda"
+                  />
+                  <p
+                    id="reporte-contacto-ayuda"
+                    className="text-sm leading-6 text-info"
+                  >
+                    Puedes dejarlo vacío. Si lo cambias, vuelve a confirmar al
+                    final.
+                  </p>
+                </div>
+
+                {extractionError && (
+                  <p
+                    role="alert"
+                    className="rounded-xl bg-danger/10 px-3 py-2 text-sm font-medium text-danger"
+                  >
+                    {extractionError}
+                  </p>
+                )}
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={restoreExtraction}
+                  className="-ml-3 min-h-11 self-start px-3 text-base text-petroleum"
                 >
-                  Este dato no es obligatorio. Puedes dejarlo vacío y enviar el
-                  reporte igual.
-                </p>
-              </div>
-
-              <dl className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl bg-soft-green/70 p-4 sm:col-span-2">
-                  <dt className="text-sm text-info">Qué pasó</dt>
-                  <dd className="mt-1 font-medium break-words whitespace-pre-wrap text-petroleum">
-                    {draft.message.trim()}
-                  </dd>
-                </div>
-                <div className="rounded-2xl bg-soft-green/70 p-4">
-                  <dt className="text-sm text-info">Dónde lo viste</dt>
-                  <dd className="mt-1 font-medium break-words text-petroleum">
-                    {draft.targetKind === "app" ? "Aplicación" : "Enlace"}:{" "}
-                    {draft.targetValue.trim()}
-                  </dd>
-                </div>
-                <div className="rounded-2xl bg-soft-green/70 p-4">
-                  <dt className="text-sm text-info">Texto o contexto</dt>
-                  <dd className="mt-1 font-medium break-words text-petroleum">
-                    {draft.context.trim() || "Sin contexto adicional"}
-                  </dd>
-                </div>
-                <div className="rounded-2xl bg-soft-green/70 p-4 sm:col-span-2">
-                  <dt className="text-sm text-info">Contacto opcional</dt>
-                  <dd className="mt-1 font-medium break-words text-petroleum">
-                    {draft.contact.trim() || "Sin contacto"}
-                  </dd>
-                </div>
-              </dl>
+                  Restablecer datos originales
+                </Button>
+              </fieldset>
 
               <div className="space-y-3">
+                <p className="rounded-2xl bg-soft-green/70 p-4 text-base leading-7 text-ink">
+                  Demostración: este reporte no se envía a ningún servidor.
+                </p>
                 <label className="flex items-start gap-3 text-base leading-7 text-ink">
                   <input
                     type="checkbox"
-                    checked={consent}
+                    checked={confirmed}
                     onChange={(event) => {
-                      setConsent(event.target.checked);
+                      setConfirmed(event.target.checked);
                       setReviewError(null);
                     }}
-                    className="mt-1 size-5 shrink-0 accent-petroleum"
+                    className="mt-1 size-6 shrink-0 accent-petroleum"
                   />
                   <span>
-                    Entiendo que este reporte es una demostración y que mis
-                    datos todavía no se envían a un servidor.
+                    Confirmo que los datos son correctos y quiero enviar el
+                    reporte.
                   </span>
                 </label>
-                <label className="flex items-start gap-3 text-base leading-7 text-ink">
-                  <input
-                    type="checkbox"
-                    checked={verified}
-                    onChange={(event) => {
-                      setVerified(event.target.checked);
-                      setReviewError(null);
-                    }}
-                    className="mt-1 size-5 shrink-0 accent-petroleum"
-                  />
-                  <span>No soy un robot (verificación simulada)</span>
-                </label>
+                <SimpleCaptcha
+                  key={captchaKey}
+                  onStatusChange={setCaptchaStatus}
+                />
                 <p className="text-sm leading-6 text-info">
-                  Esta verificación no reemplaza a Cloudflare Turnstile; el
-                  envío real necesitará la API de reportes.
+                  Esta comprobación es simulada. El envío real necesitará la API
+                  de reportes y la verificación anti-abuso del servidor.
                 </p>
                 {reviewError && (
                   <p

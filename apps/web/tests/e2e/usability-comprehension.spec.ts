@@ -144,11 +144,12 @@ test("T5 reporta un caso sintético sin enviar datos personales", async ({
   await page.getByLabel("Nombre de la aplicación").fill("Mensajería de ejemplo");
   await page.getByRole("button", { name: "Continuar al paso 3" }).click();
 
-  await expect(page.getByText("Sin contacto")).toBeVisible();
+  await expect(page.getByLabel("Correo o teléfono (opcional)")).toHaveValue("");
   await page
-    .getByLabel(/Entiendo que este reporte es una demostración/)
+    .getByLabel(/Confirmo que los datos son correctos/)
     .check();
-  await page.getByLabel(/No soy un robot/).check();
+  await page.getByRole("button", { name: "Soy una persona" }).click();
+  await expect(page.getByText("Listo, podemos continuar")).toBeVisible();
   await page.getByRole("button", { name: "Enviar reporte" }).click();
 
   await expect(

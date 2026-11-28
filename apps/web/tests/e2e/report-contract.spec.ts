@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import {
   DEMO_TURNSTILE_TOKEN,
+  buildDemoExtraction,
   buildReportSubmission,
   validateMessage,
   validateTarget,
@@ -50,4 +51,32 @@ test("valida mensaje y destino antes de construir el contrato", () => {
 
   expect(validateTarget("app", "")).toContain("Escribe el nombre");
   expect(validateTarget("app", "Mensajería de ejemplo")).toBeNull();
+});
+
+test("la extracción simulada recoge el borrador recortado", () => {
+  expect(buildDemoExtraction(draft)).toEqual({
+    targetKind: "app",
+    targetValue: "Mensajería de ejemplo",
+    message: "Me pidieron mis datos por un enlace.",
+    context: "Llegó por la mañana.",
+    contact: "",
+  });
+});
+
+test("el contrato usa los datos extraídos corregidos", () => {
+  const extraido = buildDemoExtraction(draft);
+  const corregido = {
+    ...extraido,
+    targetKind: "link" as const,
+    targetValue: "https://ejemplo.com/verificar",
+    message: "En realidad fue un enlace.",
+  };
+
+  expect(buildReportSubmission(corregido)).toEqual({
+    contract_type: "ReportSubmission",
+    target: { kind: "link", value: "https://ejemplo.com/verificar" },
+    message: "En realidad fue un enlace.",
+    context: "Llegó por la mañana.",
+    turnstile_token: DEMO_TURNSTILE_TOKEN,
+  });
 });

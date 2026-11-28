@@ -62,7 +62,7 @@ npx playwright install chromium
 | `/check/revisar` | Formulario para compartir un mensaje, correo o enlace. |
 | `/check/resultado` | Resultado con tres ratings, confianza, indicios, evidencia, resumen y recomendaciones. |
 | `/report` | Vista previa con tipo de escenario y resultado de evaluación. |
-| `/report/nuevo` | Asistente de tres pasos: relato, destino y evidencia opcional, y contacto opcional. |
+| `/report/nuevo` | Asistente de tres pasos: relato, destino y evidencia opcional, y revisión editable con confirmación y comprobación simulada. |
 | `/protect` | Introducción del simulador. |
 | `/protect/simulacion` | Celular ficticio con cuatro escenarios, recepción simulada y acceso al resultado de Check. |
 | `/protect/alerta` | Alerta, indicios y acciones según el escenario. |
@@ -121,7 +121,7 @@ Los colores están definidos como tokens en `app/globals.css`.
 - `app/`: rutas de la aplicación.
 - `components/ui/`: componentes generados por shadcn/ui.
 - `components/`: componentes compartidos del sitio.
-- `lib/`: tipos y datos de demostración de análisis y reportes.
+- `lib/`: tipos y datos de demostración de análisis, reportes y comprobación.
 - `public/`: logo y recursos estáticos.
 - `tests/e2e/`: pruebas de navegación, teclado, viewport, asistente de
   reportes, construcción del contrato y comprensión de resultados.

@@ -18,8 +18,11 @@ de simulación, la ausencia de permisos y SMS reales, el estado de carga, el
 error con reintento y el paso del escenario por alerta, acompañamiento, Check y
 Report. También cubren el asistente de reportes: validación de pasos, avisos de
 privacidad, evidencia y contacto opcionales, navegación hacia atrás y
-confirmación de demostración. `report-contract.spec.ts` comprueba sin navegador
-la construcción de `ReportSubmission` y sus validadores.
+confirmación de demostración, los datos extraídos editables, la cancelación de
+cambios, la confirmación obligatoria y el CAPTCHA simulado.
+`report-contract.spec.ts` comprueba sin navegador la extracción simulada, la
+construcción de `ReportSubmission` y sus validadores; `captcha.spec.ts` cubre
+los estados pendiente, verificado, error y reintento sin temporizadores.
 `usability-comprehension.spec.ts` verifica las cinco tareas de apoyo de H26-40:
 reconocimiento de la demostración, comprensión de ratings y recomendaciones,
 distinción entre no concluyente y conflicto, carácter simulado de Protect y

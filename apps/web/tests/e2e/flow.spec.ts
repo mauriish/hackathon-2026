@@ -259,7 +259,11 @@ test("el asistente valida cada paso antes de avanzar", async ({ page }) => {
   await page.getByRole("button", { name: "Continuar al paso 3" }).click();
   await expect(page.getByText("Paso 3 de 3", { exact: true })).toBeVisible();
   await expect(
-    page.getByText("verificación simulada", { exact: false }),
+    page.getByRole("heading", { name: "Revisa y corrige los datos" }),
+  ).toBeVisible();
+  await expect(page.getByText("Comprobación sencilla")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Soy una persona" }),
   ).toBeVisible();
 });
 
@@ -297,17 +301,16 @@ test("muestra avisos de privacidad y permite continuar sin evidencia ni contacto
   await page.getByRole("button", { name: "Continuar al paso 3" }).click();
 
   await expect(
-    page.getByRole("heading", {
-      name: "¿Cómo podemos contactarte o identificar el caso?",
-    }),
+    page.getByRole("heading", { name: "Revisa y corrige los datos" }),
   ).toBeVisible();
-  await expect(page.getByText(/Este dato no es obligatorio/)).toBeVisible();
-  await expect(page.getByText("Sin contacto")).toBeVisible();
+  await expect(page.getByText(/Puedes dejarlo vacío/)).toBeVisible();
+  await expect(page.getByLabel("Correo o teléfono (opcional)")).toHaveValue("");
 
   await page
-    .getByLabel(/Entiendo que este reporte es una demostración/)
+    .getByLabel(/Confirmo que los datos son correctos/)
     .check();
-  await page.getByLabel(/No soy un robot/).check();
+  await page.getByRole("button", { name: "Soy una persona" }).click();
+  await expect(page.getByText("Listo, podemos continuar")).toBeVisible();
   await page.getByRole("button", { name: "Enviar reporte" }).click();
 
   await expect(
@@ -339,19 +342,22 @@ test("completa el reporte con contacto opcional y muestra la confirmación", asy
   await page
     .getByLabel("Correo o teléfono (opcional)")
     .fill("abuela@ejemplo.com");
-  await expect(page.getByText("abuela@ejemplo.com")).toBeVisible();
+  await expect(page.getByLabel("Correo o teléfono (opcional)")).toHaveValue(
+    "abuela@ejemplo.com",
+  );
 
   await page.getByRole("button", { name: "Enviar reporte" }).click();
   await expect(
     page
       .getByRole("alert")
-      .filter({ hasText: "Marca el consentimiento y la verificación simulada" }),
+      .filter({ hasText: "Confirma que los datos son correctos" }),
   ).toBeVisible();
 
   await page
-    .getByLabel(/Entiendo que este reporte es una demostración/)
+    .getByLabel(/Confirmo que los datos son correctos/)
     .check();
-  await page.getByLabel(/No soy un robot/).check();
+  await page.getByRole("button", { name: "Soy una persona" }).click();
+  await expect(page.getByText("Listo, podemos continuar")).toBeVisible();
   await page.getByRole("button", { name: "Enviar reporte" }).click();
 
   await expect(
@@ -364,6 +370,42 @@ test("completa el reporte con contacto opcional y muestra la confirmación", asy
   await page.getByRole("button", { name: "Hacer otro reporte" }).click();
   await expect(page.getByText("Paso 1 de 3", { exact: true })).toBeVisible();
   await expect(page.getByLabel("Mensaje que recibiste")).toHaveValue("");
+});
+
+test("permite corregir la extracción, restaurarla y vuelve a verificar", async ({
+  page,
+}) => {
+  await page.goto("/report/nuevo");
+
+  await page
+    .getByLabel("Mensaje que recibiste")
+    .fill("Me pidieron mis datos por un enlace.");
+  await page.getByRole("button", { name: "Continuar al paso 2" }).click();
+  await page.getByLabel("¿Dónde lo viste?").selectOption("app");
+  await page.getByLabel("Nombre de la aplicación").fill("Mensajería de ejemplo");
+  await page.getByRole("button", { name: "Continuar al paso 3" }).click();
+
+  const mensajeExtraido = page.getByLabel("Mensaje que recibiste");
+  await expect(mensajeExtraido).toHaveValue(
+    "Me pidieron mis datos por un enlace.",
+  );
+
+  await page.getByLabel(/Confirmo que los datos son correctos/).check();
+  await page.getByRole("button", { name: "Soy una persona" }).click();
+  await expect(page.getByText("Listo, podemos continuar")).toBeVisible();
+
+  await mensajeExtraido.fill("Ahora recuerdo que fue por correo.");
+  await expect(mensajeExtraido).toHaveValue("Ahora recuerdo que fue por correo.");
+  await expect(page.getByText("Sin verificar")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Soy una persona" })).toBeEnabled();
+  await expect(
+    page.getByLabel(/Confirmo que los datos son correctos/),
+  ).not.toBeChecked();
+
+  await page.getByRole("button", { name: "Restablecer datos originales" }).click();
+  await expect(mensajeExtraido).toHaveValue(
+    "Me pidieron mis datos por un enlace.",
+  );
 });
 
 test("Volver atrás conserva lo que la persona escribió", async ({ page }) => {
