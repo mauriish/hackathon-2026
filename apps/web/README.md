@@ -64,9 +64,9 @@ npx playwright install chromium
 | `/report` | Vista previa con tipo de escenario y resultado de evaluación. |
 | `/report/nuevo` | Asistente de tres pasos: relato, destino y evidencia opcional, y contacto opcional. |
 | `/protect` | Introducción del simulador. |
-| `/protect/simulacion` | Bandeja simulada con mensaje ficticio. |
-| `/protect/alerta` | Alerta de riesgo alto y acciones recomendadas. |
-| `/protect/acompanamiento` | Orientación y siguientes pasos. |
+| `/protect/simulacion` | Celular ficticio con cuatro escenarios, recepción simulada y acceso al resultado de Check. |
+| `/protect/alerta` | Alerta, indicios y acciones según el escenario. |
+| `/protect/acompanamiento` | Orientación, resultado de Check, simulación y reporte. |
 
 No existe la sección Watch.
 
@@ -91,6 +91,14 @@ Este parámetro existe solo para probar los estados. Las pantallas están marcad
 como **Demo** y no presentan los resultados simulados como un análisis real.
 
 En `/check/revisar`, `?estado=error` muestra el estado de error.
+
+Protect reutiliza los mismos resultados del contrato para cuatro escenarios
+reproducibles: `?escenario=alto`, `?escenario=moderado`, `?escenario=bajo` y
+`?escenario=no_concluyente`. En `/protect/simulacion`, `?estado=cargando`
+muestra la recepción en curso y `?estado=error` muestra un error controlado con
+reintento. El enlace **Ver resultado de Check** conserva el contexto con
+`?origen=protect`. La bandeja es ficticia: no solicita permisos ni lee SMS
+reales.
 
 ## Sistema visual
 
@@ -123,6 +131,7 @@ Los colores están definidos como tokens en `app/globals.css`.
 - No hay backend, persistencia ni proveedor de IA real.
 - Report muestra una vista previa y un asistente en modo demostración; no
   registra incidentes ni envía datos.
-- Protect usa un mensaje ficticio fijo con fines educativos.
+- Protect usa cuatro mensajes ficticios fijos con fines educativos y datos de
+  demostración del contrato `Check` hasta que se integre H26-12.
 
 Consulta `AGENTS.md` antes de modificar este módulo o cualquier contrato compartido.
