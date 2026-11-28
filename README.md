@@ -6,11 +6,11 @@ aplicaciones corresponde a las Issues asignadas.
 
 ## Estado del repositorio
 
-Actualmente, el repositorio contiene las instrucciones de colaboración,
-configuración de OpenCode, skills de trabajo, una plantilla de variables de
-entorno y validaciones estructurales de CI. Las aplicaciones todavía no se han
-inicializado, por lo que aún no hay comandos de instalación, compilación o
-pruebas propios de ellas.
+El frontend de demostración está inicializado en `apps/web/` y ofrece
+recorridos para Check, Report y Protect. No está conectado a API, persistencia
+ni proveedor de IA; la integración real y su validación siguen pendientes de
+H26-06. Consulta la [guía de presentación y demo](docs/demo.md) para preparar
+el recorrido y revisar sus límites.
 
 ## Stack tecnológico
 
@@ -124,13 +124,22 @@ docs(readme): actualizar instrucciones de instalación
 
 ## Configuración local
 
-1. Clona el repositorio.
-2. Copia `.env.example` a `.env` cuando la aplicación necesite configuración.
-3. Completa únicamente las variables requeridas para el entorno local.
+Para ejecutar la demo web, se requiere Node.js LTS y npm:
+
+```bash
+cd apps/web
+npm install
+npm run dev
+```
+
+Abre `http://localhost:3000`. Este recorrido no necesita `.env` ni servicios
+externos. Para el alcance, las limitaciones y comandos de validación, consulta
+[`docs/demo.md`](docs/demo.md) y [`apps/web/README.md`](apps/web/README.md).
 
 La plantilla `.env.example` no contiene variables específicas aún. No guardes
 credenciales reales en el repositorio; `.env` y otros archivos de entorno
-locales están excluidos mediante `.gitignore`.
+locales están excluidos mediante `.gitignore`. API, base de datos e IA no están
+integradas en esta demo.
 
 ## OpenCode
 
