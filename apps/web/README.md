@@ -60,7 +60,7 @@ npx playwright install chromium
 | `/` | Logo y botón **Entrar a Check**. |
 | `/check` | Introducción de Check. |
 | `/check/revisar` | Formulario para compartir un mensaje, correo o enlace. |
-| `/check/resultado` | Resultado de riesgo alto, moderado o bajo. |
+| `/check/resultado` | Resultado con tres ratings, confianza, indicios, evidencia, resumen y recomendaciones. |
 | `/report` | Vista previa con tipo de escenario y resultado de evaluación. |
 | `/report/nuevo` | Asistente de tres pasos: relato, destino y evidencia opcional, y contacto opcional. |
 | `/protect` | Introducción del simulador. |
@@ -72,12 +72,20 @@ No existe la sección Watch.
 
 ## Resultados y modo demo
 
-El análisis real de IA todavía no está integrado. La interfaz trabaja con tres
+El análisis real de IA todavía no está integrado. La interfaz trabaja con cinco
 resultados de demostración:
 
 - `?escenario=alto`
 - `?escenario=moderado`
 - `?escenario=bajo`
+- `?escenario=no_concluyente`
+- `?escenario=conflicto`
+
+Los datos de `/check/resultado` siguen la forma del contrato `Check` de
+`contracts/` y se definen en `lib/check-result.ts`. Cada rating muestra su
+etiqueta, puntuación y peso, además del color; una señal no disponible se
+identifica como **No disponible** o **No verificada**, y las señales divergentes
+se presentan como **Señales en conflicto** sin afirmar que sea un fraude.
 
 Este parámetro existe solo para probar los estados. Las pantallas están marcadas
 como **Demo** y no presentan los resultados simulados como un análisis real.
