@@ -1,0 +1,11 @@
+{
+  "contract_type": "ReportSubmission",
+  "target": {
+    "kind": "link",
+    "value": "https://cuenta-ejemplo.invalid/acceso"
+  },
+  "message": "Recibí un mensaje sospechoso.",
+  "context": "Mensaje de prueba.",
+  "turnstile_token": "token-de-prueba-no-real",
+  "reporter_name": "Campo desconocido no permitido"
+}

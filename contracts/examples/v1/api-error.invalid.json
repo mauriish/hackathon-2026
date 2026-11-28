@@ -1,0 +1,8 @@
+{
+  "contract_type": "ApiError",
+  "code": "turnstile_unavailable",
+  "message": "No se pudo validar el envío.",
+  "retryable": true,
+  "provider": "turnstile",
+  "token": "secreto-que-no-debe-aparecer"
+}
