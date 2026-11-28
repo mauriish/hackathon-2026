@@ -19,5 +19,25 @@ result = analyzer.analyze("Mensaje a evaluar")
 ```
 
 Las pruebas usan un proveedor falso y no requieren credenciales ni llamadas
-externas. El modelo de respuesta es interno al módulo y no sustituye un contrato
-compartido acordado en `contracts/`.
+externas. El modelo `SocialEngineeringAnalysis` es interno al módulo; no
+sustituye un contrato compartido acordado en `contracts/`.
+
+## Rating semántico
+
+`semantic_rating.py` implementa `SemanticRater` y devuelve un `AiAssessment`
+validado contra el esquema compartido `contracts/schemas/v1/contracts.schema.json`.
+`risk_score` expresa riesgo de 0 a 100; `confidence` expresa por separado la
+fiabilidad de la evaluación. Cuando no hay evidencia suficiente, el resultado
+usa `risk_score: null`, `risk_level: "no_concluyente"` y confianza baja. Las
+citas de evidencia deben aparecer literalmente en el mensaje.
+
+```python
+from services.ai.analysis.semantic_rating import SemanticRater
+from services.ai.provider import GeminiConfig, GeminiProvider
+
+rater = SemanticRater(GeminiProvider(GeminiConfig.from_environment()))
+assessment = rater.assess("Mensaje saneado", context="Contexto saneado")
+```
+
+El llamador debe sanear mensaje y contexto antes de invocar al proveedor.
+Las pruebas usan un proveedor falso y no hacen solicitudes externas.
