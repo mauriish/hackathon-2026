@@ -1,0 +1,72 @@
+name: Ownership Authorization
+
+on:
+  pull_request:
+    branches:
+      - main
+      - development
+      - 'release/**'
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ownership-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  authorize:
+    name: ownership-authorization
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # La política y el validador provienen de la base, no del PR evaluado.
+      - name: Obtener configuración de la rama base
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+
+      - name: Verificar que el validador confiable exista
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! -f .github/scripts/authorize_paths.py ]]; then
+            echo "::error::El validador no existe en la rama base. La integración inicial requiere instalar y revisar este control en la base por el procedimiento administrativo del repositorio; no se ejecutará una copia no confiable del PR."
+            exit 1
+          fi
+
+      - name: Recuperar metadatos y lista completa de archivos
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/${REPOSITORY}/pulls/${PR_NUMBER}" > "$RUNNER_TEMP/pr.json"
+          gh api --paginate --slurp \
+            "repos/${REPOSITORY}/pulls/${PR_NUMBER}/files?per_page=100" \
+            > "$RUNNER_TEMP/files.json"
+
+      - name: Validar procedencia, integridad y propiedad de rutas
+        env:
+          ACTOR: ${{ github.event.pull_request.user.login }}
+          BASE: ${{ github.event.pull_request.base.ref }}
+          HEAD: ${{ github.event.pull_request.head.ref }}
+          BASE_REPO: ${{ github.event.pull_request.base.repo.full_name }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          changed_files="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["changed_files"])' "$RUNNER_TEMP/pr.json")"
+          python3 .github/scripts/authorize_paths.py \
+            --actor "$ACTOR" \
+            --base "$BASE" \
+            --head "$HEAD" \
+            --base-repo "$BASE_REPO" \
+            --head-repo "$HEAD_REPO" \
+            --changed-files "$changed_files" \
+            --files-json "$RUNNER_TEMP/files.json"
