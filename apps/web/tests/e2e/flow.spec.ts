@@ -75,6 +75,100 @@ test("muestra los tres resultados según el escenario", async ({ page }) => {
   }
 });
 
+test("muestra los tres ratings, la confianza y la evidencia del contrato", async ({
+  page,
+}) => {
+  await page.goto("/check/resultado?escenario=moderado");
+
+  await expect(
+    page.getByRole("heading", { name: "¿Qué encontramos?" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("listitem", { name: /Comunidad: Precaución/ }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("listitem", { name: /IA: Riesgo alto/ }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("listitem", { name: /Identidad: No verificada/ }),
+  ).toBeVisible();
+
+  await expect(
+    page.getByRole("heading", {
+      name: "¿Qué tan seguro es nuestro resultado?",
+    }),
+  ).toBeVisible();
+  await expect(page.getByText("Confianza alta")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "¿Qué encontramos en el mensaje?" }),
+  ).toBeVisible();
+  await expect(page.getByText("Solicita actuar rápidamente.")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Evidencia" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Resumen" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "¿Qué te recomendamos?" }),
+  ).toBeVisible();
+  await expect(page.getByText("No abras enlaces desconocidos.")).toBeVisible();
+  await expect(page.getByText("actúa ahora")).toBeVisible();
+
+  await page.setViewportSize({ width: 360, height: 800 });
+  await expect(
+    page.getByRole("heading", { name: "Ten precaución" }),
+  ).toBeVisible();
+  const hasHorizontalOverflow = await page.evaluate(
+    () =>
+      document.documentElement.scrollWidth > document.documentElement.clientWidth,
+  );
+  expect(hasHorizontalOverflow).toBe(false);
+});
+
+test("distingue un resultado no concluyente de señales en conflicto", async ({
+  page,
+}) => {
+  await page.goto("/check/resultado?escenario=no_concluyente");
+
+  await expect(
+    page.getByRole("heading", { name: "No pudimos concluir el análisis" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "No hay información suficiente para evaluar el mensaje. Esto no significa que sea seguro.",
+    ),
+  ).toBeVisible();
+  await expect(page.getByText("Confianza baja")).toBeVisible();
+  await expect(
+    page.getByRole("listitem", { name: /Comunidad: No disponible/ }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("listitem", { name: /Identidad: No verificada/ }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Señales en conflicto" }),
+  ).toHaveCount(0);
+
+  await page.goto("/check/resultado?escenario=conflicto");
+
+  await expect(
+    page.getByRole("heading", { name: "Señales en conflicto" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "Las señales disponibles no coinciden. No podemos afirmar que sea un fraude ni descartarlo.",
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("listitem", { name: /Comunidad: Riesgo alto/ }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("listitem", { name: /IA: Sin señales relevantes/ }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "No pudimos concluir el análisis" }),
+  ).toHaveCount(0);
+});
+
 test("no expone Watch en la navegación principal", async ({ page }) => {
   for (const path of ["/", "/check", "/report", "/protect"]) {
     await page.goto(path);

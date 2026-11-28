@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { ResultPanel } from "@/components/result-panel";
+import { CheckResultPanel } from "@/components/check-result-panel";
 import { SiteHeader } from "@/components/site-header";
-import { analysisResults, normalizeRiskLevel } from "@/lib/analysis";
+import { checkResponses, getCheckScenario } from "@/lib/check-result";
 
 export const instant = false;
 
@@ -11,7 +11,8 @@ type ResultPageProps = {
 
 export default async function CheckResultPage({ searchParams }: ResultPageProps) {
   const params = await searchParams;
-  const result = analysisResults[normalizeRiskLevel(params.escenario)];
+  const scenario = getCheckScenario(params.escenario);
+  const check = checkResponses[scenario];
 
   return (
     <>
@@ -22,7 +23,7 @@ export default async function CheckResultPage({ searchParams }: ResultPageProps)
             Volver a revisar
           </Link>
         </p>
-        <ResultPanel result={result} />
+        <CheckResultPanel check={check} />
       </main>
     </>
   );
