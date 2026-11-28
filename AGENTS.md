@@ -6,6 +6,24 @@
 Proyecto colaborativo de cinco integrantes, desarrollado mediante
 OpenCode con libertad de elección del modelo de IA.
 
+### Stack tecnológico oficial
+
+- Frontend: Next.js, React, TypeScript, Tailwind CSS y shadcn/ui.
+- Backend: Python 3.12, FastAPI, Pydantic y OpenAPI.
+- Datos: PostgreSQL y Supabase; pgvector solo si RAG lo requiere.
+- IA: Gemini API, RAG sobre conocimiento validado, respuestas JSON Schema
+  estructuradas y heurísticas deterministas.
+- Seguridad: Cloudflare Turnstile, RapidFuzz, tldextract, dnspython, RDAP,
+  Google Safe Browsing sujeto a disponibilidad y hashlib para deduplicación.
+- Calidad: Pytest, Playwright, ESLint y GitHub Actions.
+- Despliegue previsto: Vercel (frontend), Render (backend) y Supabase (base de
+  datos).
+
+La arquitectura es un monorepositorio con backend modular y frontend
+independiente; no se utilizan microservicios ni gestores de dependencias
+independientes por módulo del backend. No fijar versiones ni inicializar
+aplicaciones salvo que la Issue asignada lo solicite.
+
 Priorizar:
 
 - Simplicidad, funcionalidad, estabilidad y mantenibilidad.

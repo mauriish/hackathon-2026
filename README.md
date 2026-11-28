@@ -1,14 +1,36 @@
-# Plataforma colaborativa
+# Resumen del repositorio
 
-Repositorio de una plataforma colaborativa desarrollada por cinco integrantes.
-El nombre oficial, el stack y la aplicación aún están por definirse.
+Monorepositorio de una plataforma colaborativa desarrollada por cinco
+integrantes. El stack tecnológico está definido; la inicialización de las
+aplicaciones corresponde a las Issues asignadas.
 
 ## Estado del repositorio
 
 Actualmente, el repositorio contiene las instrucciones de colaboración,
 configuración de OpenCode, skills de trabajo, una plantilla de variables de
-entorno y validaciones estructurales de CI. Aún no hay una aplicación ni
-comandos de instalación, compilación o pruebas propios de un stack.
+entorno y validaciones estructurales de CI. Las aplicaciones todavía no se han
+inicializado, por lo que aún no hay comandos de instalación, compilación o
+pruebas propios de ellas.
+
+## Stack tecnológico
+
+- **Frontend:** Next.js, React, TypeScript, Tailwind CSS y shadcn/ui.
+- **Backend:** Python 3.12, FastAPI, Pydantic y OpenAPI.
+- **Base de datos:** PostgreSQL y Supabase; pgvector solo si se necesita para
+  RAG.
+- **IA:** Gemini API, RAG sobre conocimiento previamente validado, respuestas
+  estructuradas mediante JSON Schema y heurísticas deterministas.
+- **Ciberseguridad:** Cloudflare Turnstile, RapidFuzz, tldextract, dnspython,
+  RDAP, Google Safe Browsing sujeto a disponibilidad y hashlib para
+  deduplicación.
+- **Pruebas y calidad:** Pytest, Playwright, ESLint y GitHub Actions.
+- **Despliegue previsto:** Vercel para frontend, Render para backend y Supabase
+  para base de datos.
+
+La arquitectura es un monorepositorio con backend modular y frontend
+independiente. No se utilizarán microservicios ni gestores de dependencias
+independientes para cada módulo del backend. No se fijan versiones de
+dependencias en esta definición.
 
 ## Monorepositorio y propietarios
 
@@ -16,9 +38,8 @@ Cada integrante trabaja dentro de su área. Las rutas y propietarios están
 definidos en `.github/CODEOWNERS`, que solicita revisiones pero no concede ni
 restringe permisos de escritura. Los `AGENTS.md` locales delimitan el trabajo.
 Estos directorios son límites de responsabilidad, no implican servicios
-independientes. Como el stack aún no está definido, no se crean aplicaciones
-independientes ni gestores de dependencias por módulo; esas decisiones se
-tomarán en equipo.
+independientes. El backend permanece modular dentro del monorepositorio; el
+frontend es independiente.
 
 | Usuario | Rol y área |
 | --- | --- |
@@ -30,8 +51,11 @@ tomarán en equipo.
 
 Cada módulo mantiene sus pruebas unitarias y documentación específica;
 `tests/` contiene pruebas generales de integración, seguridad y E2E. Los
-contratos entre componentes se preparan en [`contracts/README.md`](contracts/README.md)
-sin fijar aún formatos ni decisiones técnicas.
+contratos entre componentes se documentan en
+[`contracts/README.md`](contracts/README.md).
+
+Las decisiones y límites de arquitectura están documentados en
+[`docs/architecture.md`](docs/architecture.md).
 
 La estructura funcional contempla análisis, búsqueda, reportes, componentes y
 pruebas en `apps/web/`; rutas, persistencia, comunidad y pruebas en
@@ -126,7 +150,8 @@ El workflow `.github/workflows/checks.yml` se ejecuta en Pull Requests y pushes
 a `main`, `development` y ramas `release/**`, y también puede iniciarse
 manualmente. Comprueba archivos requeridos, archivos de entorno versionados y
 marcadores de conflictos. Las validaciones de lint, tipos, build y pruebas se
-añadirán cuando se defina el stack tecnológico.
+añadirán de forma gradual mediante las Issues asignadas, conforme se
+inicialicen las aplicaciones y haya comandos verificables.
 
 `.github/workflows/ownership.yml` valida PR hacia `main`, `development` y
 `release/**`. `Repository Checks` y `ownership-authorization` son checks
