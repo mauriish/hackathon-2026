@@ -62,6 +62,7 @@ npx playwright install chromium
 | `/check/revisar` | Formulario para compartir un mensaje, correo o enlace. |
 | `/check/resultado` | Resultado de riesgo alto, moderado o bajo. |
 | `/report` | Vista previa con tipo de escenario y resultado de evaluación. |
+| `/report/nuevo` | Asistente de tres pasos: relato, destino y evidencia opcional, y contacto opcional. |
 | `/protect` | Introducción del simulador. |
 | `/protect/simulacion` | Bandeja simulada con mensaje ficticio. |
 | `/protect/alerta` | Alerta de riesgo alto y acciones recomendadas. |
@@ -104,14 +105,16 @@ Los colores están definidos como tokens en `app/globals.css`.
 - `app/`: rutas de la aplicación.
 - `components/ui/`: componentes generados por shadcn/ui.
 - `components/`: componentes compartidos del sitio.
-- `lib/`: tipos y datos de demostración de análisis.
+- `lib/`: tipos y datos de demostración de análisis y reportes.
 - `public/`: logo y recursos estáticos.
-- `tests/e2e/`: pruebas de navegación, teclado y viewport.
+- `tests/e2e/`: pruebas de navegación, teclado, viewport, asistente de
+  reportes y construcción del contrato.
 
 ## Limitaciones
 
 - No hay backend, persistencia ni proveedor de IA real.
-- Report muestra una vista previa; no registra incidentes.
+- Report muestra una vista previa y un asistente en modo demostración; no
+  registra incidentes ni envía datos.
 - Protect usa un mensaje ficticio fijo con fines educativos.
 
 Consulta `AGENTS.md` antes de modificar este módulo o cualquier contrato compartido.

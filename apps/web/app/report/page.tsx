@@ -75,8 +75,18 @@ export default async function ReportPage({ searchParams }: ReportPageProps) {
 
             <div className="flex flex-wrap gap-3">
               <Link
-                href="/"
+                href="/report/nuevo"
                 className={buttonVariants({ size: "lg", className: "min-h-12 w-full text-base sm:w-auto" })}
+              >
+                Reportar este caso
+              </Link>
+              <Link
+                href="/"
+                className={buttonVariants({
+                  variant: "outline",
+                  size: "lg",
+                  className: "min-h-12 w-full text-base sm:w-auto",
+                })}
               >
                 Volver al inicio
               </Link>
