@@ -12,7 +12,7 @@ Configura `API_DATABASE_URL` como variable de entorno usando una URL de
 PostgreSQL. No guardes credenciales en el repositorio. La aplicación no ejecuta
 migraciones automáticamente al arrancar.
 
-## Datos y privacidad
+## Purga automática y datos
 
 `report_records` guarda únicamente destinos y texto saneados, junto con el
 estado del reporte. No almacena la solicitud original, el token de Turnstile ni
@@ -27,10 +27,17 @@ información sensible.
 del cambio. No copia el contenido del reporte. El historial se elimina al
 eliminarse el reporte.
 
-El purgado ocurre al crear, consultar o actualizar registros y también está
-disponible mediante `purge_expired_abuse_identifiers`. No se configura un
-proceso periódico en esta Issue; en periodos sin actividad podrían permanecer
-identificadores expirados hasta la siguiente operación o purga explícita.
+Con `API_DATABASE_URL` configurada, el proceso API inicia una tarea que purga
+identificadores expirados al arrancar y cada hora. Si la base no está disponible,
+el error queda registrado y se reintenta en un minuto; la tarea no impide que
+arranque el servidor. Al detenerse el API, la tarea se cancela correctamente y
+se reanuda en el siguiente arranque. Por eso, durante una interrupción del API
+pueden permanecer filas expiradas hasta que el proceso vuelva a ejecutarse.
+
+Las operaciones de persistencia también purgan identificadores vencidos, y
+`purge_expired_abuse_identifiers` permite ejecutar la limpieza explícitamente.
+La purga elimina únicamente el seudónimo y conserva el reporte saneado y su
+auditoría.
 
 ## Pruebas de integración
 
