@@ -100,16 +100,18 @@ en la base: la primera integración del workflow/script requiere revisión human
 ejecución independiente de sus pruebas y coordinación administrativa; no se
 ejecuta código de autorización no confiable del PR.
 
-**Protecciones administrativas:** el repositorio ya tuvo un Ruleset para
-`main`, `development` y `release/**`, y se comprobó entonces la protección de
-push directo, revisiones humanas y CI. Su estado actual no se puede confirmar
-desde el árbol local y debe verificarse en GitHub: restaurar aprobaciones
-obligatorias, prohibición de pushes directos y force-push, el check existente
-`Repository Checks`, y añadir `ownership-authorization` después de integrarlo y
-probarlo. También debe protegerse el propio mecanismo de autorización. Los
-Rulesets no se modifican desde esta tarea. La protección del workflow/script,
-los permisos de escritura y las revisiones requeridas dependen de configuración
-administrativa de GitHub; CODEOWNERS solo asigna revisores.
+**Protecciones administrativas:** la consulta a la API de GitHub del
+27-11-2026 muestra activo el Ruleset `Protected Branches` para `main`,
+`development` y `release/**`. Exige Pull Request y una aprobación, descarta
+aprobaciones obsoletas tras nuevos pushes, exige aprobación del último push y
+resolución de conversaciones; también bloquea la eliminación y los force-push.
+La configuración consultada no exige aprobación de Code Owner ni checks
+obligatorios, por lo que `Repository Checks` y `ownership-authorization` no
+están garantizados como condiciones de integración por ese Ruleset. CODEOWNERS
+asigna revisores, pero no concede ni restringe permisos de escritura. Los
+Rulesets, permisos de escritura y otras protecciones dependen de la
+configuración administrativa de GitHub y deben volver a verificarse allí si
+cambian.
 
 Usar Conventional Commits con descripciones en español, por ejemplo:
 
