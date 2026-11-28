@@ -44,7 +44,8 @@ export default async function ReportPage({ searchParams }: ReportPageProps) {
               </h1>
               <p className="leading-7 text-info">
                 Este resumen muestra el tipo de escenario y el resultado de la
-                evaluación. El registro real requiere la API de reportes.
+                evaluación. Puedes continuar con el formulario de reporte; el
+                envío real requiere la API de reportes.
               </p>
             </div>
 
@@ -75,8 +76,18 @@ export default async function ReportPage({ searchParams }: ReportPageProps) {
 
             <div className="flex flex-wrap gap-3">
               <Link
-                href="/"
+                href={`/report/formulario?escenario=${result.level}`}
                 className={buttonVariants({ size: "lg", className: "min-h-12 w-full text-base sm:w-auto" })}
+              >
+                Hacer un reporte
+              </Link>
+              <Link
+                href="/"
+                className={buttonVariants({
+                  variant: "outline",
+                  size: "lg",
+                  className: "min-h-12 w-full text-base sm:w-auto",
+                })}
               >
                 Volver al inicio
               </Link>
