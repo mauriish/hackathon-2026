@@ -13,3 +13,18 @@ El backend utiliza Python 3.12, FastAPI, Pydantic y OpenAPI, con PostgreSQL y
 Supabase para datos. Consulta [`docs/architecture.md`](../../docs/architecture.md)
 para las decisiones completas; la configuración e inicialización se realizan
 en las Issues correspondientes.
+
+## Persistencia
+
+La persistencia PostgreSQL utiliza `API_DATABASE_URL`. Las migraciones
+versionadas se aplican explícitamente desde `services/api/` con:
+
+```bash
+python -m database.cli migrate
+```
+
+Consulta [`database/README.md`](database/README.md) para la configuración,
+privacidad y pruebas de integración. No guardes credenciales en el repositorio.
+
+Las instrucciones para inicializar y ejecutar el servidor API se definirán en
+las Issues correspondientes.
