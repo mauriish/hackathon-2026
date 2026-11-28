@@ -62,6 +62,7 @@ npx playwright install chromium
 | `/check/revisar` | Formulario para compartir un mensaje, correo o enlace. |
 | `/check/resultado` | Resultado de riesgo alto, moderado o bajo. |
 | `/report` | Vista previa con tipo de escenario y resultado de evaluación. |
+| `/report/formulario` | Asistente de reporte en tres pasos y confirmación. |
 | `/protect` | Introducción del simulador. |
 | `/protect/simulacion` | Bandeja simulada con mensaje ficticio. |
 | `/protect/alerta` | Alerta de riesgo alto y acciones recomendadas. |
@@ -83,6 +84,14 @@ como **Demo** y no presentan los resultados simulados como un análisis real.
 
 En `/check/revisar`, `?estado=error` muestra el estado de error.
 
+## Formulario de reporte
+
+El asistente de `/report/formulario` tiene tres pasos: relato, evidencia
+opcional y datos de contacto opcionales. El dictado usa la Web Speech API del
+navegador; si no está disponible, muestra un mensaje y el relato se puede
+escribir. La confirmación indica explícitamente que es una demostración y que
+no se enviaron datos a ningún servidor.
+
 ## Sistema visual
 
 | Uso | Color |
@@ -103,7 +112,7 @@ Los colores están definidos como tokens en `app/globals.css`.
 
 - `app/`: rutas de la aplicación.
 - `components/ui/`: componentes generados por shadcn/ui.
-- `components/`: componentes compartidos del sitio.
+- `components/`: componentes compartidos del sitio, incluido `report-form.tsx`.
 - `lib/`: tipos y datos de demostración de análisis.
 - `public/`: logo y recursos estáticos.
 - `tests/e2e/`: pruebas de navegación, teclado y viewport.
@@ -111,7 +120,7 @@ Los colores están definidos como tokens en `app/globals.css`.
 ## Limitaciones
 
 - No hay backend, persistencia ni proveedor de IA real.
-- Report muestra una vista previa; no registra incidentes.
+- Report muestra una vista previa y el formulario no registra ni envía incidentes.
 - Protect usa un mensaje ficticio fijo con fines educativos.
 
 Consulta `AGENTS.md` antes de modificar este módulo o cualquier contrato compartido.
