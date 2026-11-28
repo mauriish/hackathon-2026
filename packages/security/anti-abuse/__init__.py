@@ -1,5 +1,12 @@
-"""Controles antiabuso reutilizables: límite de frecuencia y Turnstile."""
+"""Controles antiabuso: límite de frecuencia, Turnstile y deduplicación."""
 
+from .deduplication import (
+    DeduplicationDecision,
+    Deduplicator,
+    FingerprintStore,
+    InMemoryFingerprintStore,
+    compute_fingerprint,
+)
 from .guard import RequestDecision, evaluate_request
 from .rate_limit import RateLimitDecision, RateLimiter
 from .turnstile import (
@@ -9,11 +16,16 @@ from .turnstile import (
 )
 
 __all__ = [
+    "DeduplicationDecision",
+    "Deduplicator",
+    "FingerprintStore",
+    "InMemoryFingerprintStore",
     "RateLimitDecision",
     "RateLimiter",
     "RequestDecision",
     "TurnstileResult",
     "TurnstileUnavailableError",
     "TurnstileVerifier",
+    "compute_fingerprint",
     "evaluate_request",
 ]
