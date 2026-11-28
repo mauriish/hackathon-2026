@@ -39,3 +39,10 @@ El asistente:
 
 La verificación visible no reemplaza a Cloudflare Turnstile. El envío real
 necesitará la API de reportes y la verificación anti-abuso del backend.
+
+## Pruebas de usabilidad (H26-40)
+
+`usabilidad/guion-prueba.md` describe las tareas guiadas y las reglas de registro
+sin datos personales. `usabilidad/informe.md` concentra los resultados; las
+sesiones con participantes están pendientes y no se han rellenado observaciones
+ficticias.

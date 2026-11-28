@@ -124,7 +124,8 @@ Los colores están definidos como tokens en `app/globals.css`.
 - `lib/`: tipos y datos de demostración de análisis y reportes.
 - `public/`: logo y recursos estáticos.
 - `tests/e2e/`: pruebas de navegación, teclado, viewport, asistente de
-  reportes y construcción del contrato.
+  reportes, construcción del contrato y comprensión de resultados.
+- `reports/usabilidad/`: guion e informe de pruebas de usabilidad (H26-40).
 
 ## Limitaciones
 
@@ -133,5 +134,7 @@ Los colores están definidos como tokens en `app/globals.css`.
   registra incidentes ni envía datos.
 - Protect usa cuatro mensajes ficticios fijos con fines educativos y datos de
   demostración del contrato `Check` hasta que se integre H26-12.
+- Las pruebas de usabilidad con participantes reales están pendientes; el guion
+  y el informe se encuentran en `reports/usabilidad/`.
 
 Consulta `AGENTS.md` antes de modificar este módulo o cualquier contrato compartido.
