@@ -20,3 +20,10 @@ Configura `GEMINI_API_KEY` y `GEMINI_MODEL` en el entorno antes de crear
 `GeminiConfig` con `GeminiConfig.from_environment()`. La clave nunca se incluye
 en errores del adaptador. Para las pruebas, se puede sustituir la llamada HTTP
 por un mock sin utilizar credenciales ni realizar solicitudes externas.
+
+## Extracción de reportes
+
+`extraction/report.py` extrae entidad, URL observada, fecha, canal, tipo y
+resumen. Los valores desconocidos o ambiguos son `None` y los inferidos se
+señalan explícitamente. Consulta `extraction/README.md` para el uso y los
+límites de esta interfaz interna.
