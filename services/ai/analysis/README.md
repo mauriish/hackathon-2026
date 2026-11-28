@@ -22,6 +22,15 @@ Las pruebas usan un proveedor falso y no requieren credenciales ni llamadas
 externas. El modelo `SocialEngineeringAnalysis` es interno al módulo; no
 sustituye un contrato compartido acordado en `contracts/`.
 
+Ante un timeout, una respuesta inválida o una cita que no pueda verificarse,
+`SocialEngineeringAnalyzer.analyze` lanza `AnalysisError` con un mensaje
+controlado. No se interpreta el fallo como ausencia de señales. El rating
+semántico, en cambio, devuelve `AiAssessment` no concluyente y de confianza baja
+ante errores del proveedor o evidencia no verificable. Los mensajes y contextos
+se serializan como JSON y se instruye al modelo a tratarlos como datos; esto no
+sustituye otras medidas de seguridad ni el saneamiento que corresponde al
+llamador.
+
 ## Rating semántico
 
 `semantic_rating.py` implementa `SemanticRater` y devuelve un `AiAssessment`
