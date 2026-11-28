@@ -1,0 +1,72 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Quick Falcon API",
+    "version": "1.0.0",
+    "description": "Contrato OpenAPI de las rutas HTTP implementadas. Los modelos de reportes y análisis se publican como componentes reutilizables; no se anuncian rutas de reporte aún no implementadas."
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Comprobar disponibilidad del proceso API",
+        "responses": {
+          "200": {
+            "description": "El proceso está disponible.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthResponse" },
+                "example": { "status": "ok" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["status"],
+        "properties": {
+          "status": { "const": "ok" }
+        }
+      },
+      "ReportSubmission": {
+        "$ref": "../schemas/v1/contracts.schema.json#/$defs/ReportSubmission"
+      },
+      "Target": {
+        "$ref": "../schemas/v1/contracts.schema.json#/$defs/Target"
+      },
+      "SanitizedTarget": {
+        "$ref": "../schemas/v1/contracts.schema.json#/$defs/SanitizedTarget"
+      },
+      "ReportRecord": {
+        "$ref": "../schemas/v1/contracts.schema.json#/$defs/ReportRecord"
+      },
+      "AnalysisRequest": {
+        "$ref": "../schemas/v1/contracts.schema.json#/$defs/AnalysisRequest"
+      },
+      "AiAssessment": {
+        "$ref": "../schemas/v1/contracts.schema.json#/$defs/AiAssessment"
+      },
+      "Evidence": {
+        "$ref": "../schemas/v1/contracts.schema.json#/$defs/Evidence"
+      },
+      "RatingSignal": {
+        "$ref": "../schemas/v1/contracts.schema.json#/$defs/RatingSignal"
+      },
+      "ProviderStatus": {
+        "$ref": "../schemas/v1/contracts.schema.json#/$defs/ProviderStatus"
+      },
+      "Check": {
+        "$ref": "../schemas/v1/contracts.schema.json#/$defs/Check"
+      },
+      "ApiError": {
+        "$ref": "../schemas/v1/contracts.schema.json#/$defs/ApiError"
+      }
+    }
+  }
+}

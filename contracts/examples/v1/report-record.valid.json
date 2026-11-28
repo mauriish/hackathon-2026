@@ -1,0 +1,14 @@
+{
+  "contract_type": "ReportRecord",
+  "report_id": "6f4e1e5e-44b8-4ec3-a4cf-41c76a7fdf29",
+  "created_at": "2026-11-28T10:00:00Z",
+  "target": {
+    "kind": "link",
+    "value": "https://cuenta-ejemplo.invalid/acceso"
+  },
+  "sanitized_message": "Recibí un mensaje que pide verificar mi cuenta.",
+  "sanitized_context": "Mensaje recibido por una aplicación de mensajería.",
+  "abuse_id": "abuse_0123456789abcdef",
+  "abuse_id_expires_at": "2026-12-12T10:00:00Z",
+  "status": "received"
+}
