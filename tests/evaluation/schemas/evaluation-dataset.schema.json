@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Dataset de evaluación H26-33",
+  "description": "Estructura local del dataset sintético de evaluación. No es un contrato compartido entre módulos.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "dataset_id",
+    "version",
+    "source_contract",
+    "description",
+    "cases_digest_sha256",
+    "cases"
+  ],
+  "properties": {
+    "dataset_id": { "const": "h26-33-eval-v1" },
+    "version": { "const": 1 },
+    "source_contract": {
+      "const": "contracts/schemas/v1/contracts.schema.json"
+    },
+    "description": { "type": "string", "minLength": 1 },
+    "cases_digest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 12,
+      "items": { "$ref": "#/$defs/Case" }
+    }
+  },
+  "$defs": {
+    "Case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "category",
+        "contract",
+        "scenario",
+        "payload",
+        "expected"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(BEN|SOS|AMB|ERR)-[0-9]{3}$"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["benigno", "sospechoso", "ambiguo", "error"]
+        },
+        "contract": {
+          "type": "string",
+          "enum": [
+            "ReportSubmission",
+            "ReportRecord",
+            "AnalysisRequest",
+            "AiAssessment",
+            "Evidence",
+            "RatingSignal",
+            "Check",
+            "ApiError"
+          ]
+        },
+        "scenario": { "type": "string", "minLength": 1 },
+        "payload": { "type": "object" },
+        "expected": { "$ref": "#/$defs/Expected" }
+      }
+    },
+    "Expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["valid_against_contract", "notes"],
+      "properties": {
+        "valid_against_contract": { "type": "boolean" },
+        "contract_type": { "type": "string", "minLength": 1 },
+        "status": {
+          "type": "string",
+          "enum": ["completed", "inconclusive", "failed"]
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": [
+            "riesgo_alto",
+            "riesgo_moderado",
+            "sin_senales_importantes",
+            "no_concluyente"
+          ]
+        },
+        "risk_score": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "available_signals": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["community", "ai", "identity"]
+          }
+        },
+        "error_code": { "type": "string", "minLength": 1 },
+        "notes": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}
