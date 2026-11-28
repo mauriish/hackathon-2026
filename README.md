@@ -16,6 +16,8 @@ análisis con IA aún no están integrados en esta release.
 Consulta la [guía de despliegue](docs/deployment.md) para la configuración y
 las comprobaciones del entorno de pruebas. Los comandos de instalación y
 pruebas de la API están en [`services/api/README.md`](services/api/README.md).
+El [guion de presentación](docs/demo.md) refleja el alcance actual de `release/v1`
+y sus límites.
 
 ## Stack tecnológico
 
@@ -135,7 +137,9 @@ docs(readme): actualizar instrucciones de instalación
 
 La plantilla `.env.example` no contiene variables específicas aún. No guardes
 credenciales reales en el repositorio; `.env` y otros archivos de entorno
-locales están excluidos mediante `.gitignore`.
+locales están excluidos mediante `.gitignore`. Para iniciar la API, consulta
+[`services/api/README.md`](services/api/README.md); el frontend y la IA aún no
+están integrados en `release/v1`.
 
 ## OpenCode
 
