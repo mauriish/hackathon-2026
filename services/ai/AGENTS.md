@@ -9,4 +9,7 @@ Responsable: `Chedooo` (AI Engineer).
 - Publica interfaces propuestas en `contracts/`; no modifiques API, frontend,
   seguridad ni configuración compartida unilateralmente.
 - Para cambios transversales, solicita revisión de los propietarios afectados
-  y `mauriish`. Conserva cambios ajenos. El stack no está definido.
+  y `mauriish`. Conserva cambios ajenos.
+- Usa Gemini API; las respuestas estructuradas siguen JSON Schema, el RAG
+  recupera únicamente conocimiento validado y las heurísticas son
+  deterministas. Consulta `docs/architecture.md` para el stack completo.

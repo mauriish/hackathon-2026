@@ -8,4 +8,8 @@ Responsable: `aguillonmarthaguadalupe-lab` (QA y Security).
 - No cambies contratos ni configuración compartida unilateralmente. Solicita
   cambios transversales mediante Issue o PR con justificación y revisión de
   `mauriish` y de los propietarios afectados.
-- Conserva contribuciones existentes. No fijes tecnologías no acordadas.
+- Tecnologías oficiales del área: Cloudflare Turnstile, RapidFuzz, tldextract,
+  dnspython, RDAP y hashlib para deduplicación; Google Safe Browsing sujeto a
+  disponibilidad. Consulta `docs/architecture.md` para el contexto completo.
+- Conserva contribuciones existentes; no fijes versiones ni añadas tecnologías
+  fuera de las decisiones oficiales.
