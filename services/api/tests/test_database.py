@@ -14,7 +14,9 @@ from database.migrations import apply_migrations
 from database.models import ReportRecord, ReportStatus
 from database.repository import (
     create_report,
+    get_official_identity,
     get_report,
+    list_official_identities,
     purge_expired_abuse_identifiers,
     update_report_status,
 )
@@ -106,8 +108,46 @@ def test_migrations_are_reproducible_and_idempotent(database_connection) -> None
     first_run = apply_migrations(database_connection)
     second_run = apply_migrations(database_connection)
 
-    assert first_run == ("001_create_report_storage.sql",)
+    assert first_run == (
+        "001_create_report_storage.sql",
+        "002_create_official_identities.sql",
+    )
     assert second_run == ()
+
+
+def test_official_identity_catalog_is_seeded_and_queryable(database_connection) -> None:
+    apply_migrations(database_connection)
+
+    identities = list_official_identities(database_connection)
+    nasa = get_official_identity(database_connection, "NASA.GOV.")
+
+    assert len(identities) == 10
+    assert nasa is not None
+    assert nasa.organization == "National Aeronautics and Space Administration (NASA)"
+    assert nasa.domain == "nasa.gov"
+    assert nasa.source_url.startswith("https://")
+    assert get_official_identity(database_connection, "subdomain.nasa.gov") is None
+    assert get_official_identity(database_connection, "unknown.example") is None
+
+
+def test_official_identity_catalog_rejects_duplicate_domains(
+    database_connection,
+) -> None:
+    apply_migrations(database_connection)
+
+    with pytest.raises(psycopg.errors.UniqueViolation):
+        with database_connection.transaction():
+            with database_connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    INSERT INTO official_identities (
+                        organization, domain, sector, source_url, verified_at
+                    ) VALUES (
+                        'Duplicate NASA', 'nasa.gov', 'Test',
+                        'https://example.test', DATE '2026-01-01'
+                    )
+                    """
+                )
 
 
 def test_report_status_is_persisted_and_audited(database_connection) -> None:

@@ -32,6 +32,16 @@ disponible mediante `purge_expired_abuse_identifiers`. No se configura un
 proceso periódico en esta Issue; en periodos sin actividad podrían permanecer
 identificadores expirados hasta la siguiente operación o purga explícita.
 
+## Catálogo de identidades oficiales
+
+La migración `002_create_official_identities.sql` carga los registros curados
+de H26-36 en `official_identities`, junto con su sector, fuente, fecha de
+verificación y observaciones. `list_official_identities` devuelve el catálogo;
+`get_official_identity` busca un dominio exacto y devuelve `None` si no se
+encuentra. La búsqueda no infiere subdominios ni considera que un dominio
+registrado garantice que un mensaje o sus enlaces sean seguros. El dominio
+primario evita duplicados.
+
 ## Pruebas de integración
 
 Las pruebas de base de datos crean y eliminan un esquema aislado. Configura
