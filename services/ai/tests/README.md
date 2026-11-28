@@ -10,4 +10,5 @@ raíz del repositorio y no requieren una API key ni acceso de red:
 python -m unittest services.ai.tests.test_provider
 python -m unittest services.ai.tests.test_social_engineering
 python -m unittest services.ai.tests.test_extraction
+python -m unittest services.ai.tests.test_semantic_rating
 ```
