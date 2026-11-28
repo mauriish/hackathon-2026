@@ -1,4 +1,13 @@
-# Pruebas unitarias del frontend
+# Pruebas del frontend
 
-Las pruebas propias de `apps/web/` pertenecen a su propietario y se mantienen
-junto al módulo. No se ha elegido un framework de pruebas.
+Las pruebas end-to-end viven en `e2e/` y usan Playwright.
+
+Comandos desde `apps/web`:
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
+
+Cubren navegación entre Check, Report y Protect, ausencia de Watch, teclado,
+viewport móvil y los tres escenarios de resultado.
