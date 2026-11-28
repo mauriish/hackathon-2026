@@ -27,6 +27,11 @@ opcional se realiza mediante `APP_NAME`, `APP_ENV`, `APP_HOST` y `APP_PORT`;
 los valores inválidos impiden el arranque. No se requieren secretos para esta
 inicialización.
 
+La persistencia PostgreSQL utiliza `API_DATABASE_URL`; las migraciones se
+aplican explícitamente desde `services/api/` con
+`python -m database.cli migrate`. Consulta
+[`database/README.md`](database/README.md) para configuración y pruebas aisladas.
+
 Ejecuta las pruebas desde `services/api/`:
 
 ```bash
