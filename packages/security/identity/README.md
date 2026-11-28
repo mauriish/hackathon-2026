@@ -21,6 +21,26 @@ host). La comparación es exacta sobre el host: `www.example.org` y
 `example.org` son entradas distintas salvo que el catálogo incluya ambas. No se
 aplica una Public Suffix List ni se infiere un dominio registrable.
 
+## Rating de identidad
+
+`rate_identity(urls, catalog)` contrasta las URLs disponibles mediante la
+clasificación anterior y devuelve `IdentityRatingResult`: `MATCHED` si alguna
+coincide exactamente, `UNMATCHED` si hay evidencia válida sin coincidencias e
+`INSUFFICIENT` si no hay URLs válidas o el catálogo es nulo, está vacío o no
+contiene entradas válidas. El resultado conserva las clasificaciones con orden
+estable y explica el motivo. Una identidad no encontrada en el catálogo no
+constituye por sí sola evidencia de fraude.
+
+El campo `score` de `IdentityRatingResult` es `0` para `MATCHED`, `20` para
+`UNMATCHED` y `None` para `INSUFFICIENT`. El valor `20` coincide con el límite
+inferior de `riesgo_moderado` del contrato; estos valores se acordaron para
+H26-29 y no modifican sus pesos ni umbrales.
+
+El catálogo se inyecta desde el consumidor; el paquete no consulta la base de
+datos ni realiza solicitudes de red. Esto permite conectar la consulta de
+H26-10 sin duplicar sus datos ni acoplar seguridad a la implementación interna
+de persistencia.
+
 ## Garantía de no navegación
 
 La interfaz usa únicamente biblioteca estándar (`urllib.parse`, `ipaddress`,
