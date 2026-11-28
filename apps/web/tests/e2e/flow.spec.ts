@@ -69,7 +69,9 @@ test("muestra los tres resultados según el escenario", async ({ page }) => {
 
   for (const scenario of scenarios) {
     await page.goto(`/check/resultado?escenario=${scenario.level}`);
-    await expect(page.getByRole("heading", { name: scenario.title })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: scenario.title }),
+    ).toBeVisible();
   }
 });
 
@@ -98,11 +100,17 @@ test("mantiene la navegación visible en viewport móvil", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "¿Tienes duda sobre un mensaje?" }),
   ).toBeVisible();
-  await expect(page.getByRole("navigation", { name: "Navegación principal" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Revisar mensaje" })).toBeVisible();
+  await expect(
+    page.getByRole("navigation", { name: "Navegación principal" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Revisar mensaje" }),
+  ).toBeVisible();
 });
 
-test("Protect muestra la alerta y permite llegar a Report", async ({ page }) => {
+test("Protect muestra la alerta y permite llegar a Report", async ({
+  page,
+}) => {
   await page.goto("/protect/simulacion");
   await page.getByRole("link", { name: "Ver análisis de riesgo" }).click();
 
@@ -119,4 +127,159 @@ test("Protect muestra la alerta y permite llegar a Report", async ({ page }) => 
   await expect(
     page.getByRole("heading", { name: "Vista previa del reporte" }),
   ).toBeVisible();
+});
+
+test("Report permite abrir el asistente de tres pasos", async ({ page }) => {
+  await page.goto("/report");
+  await page.getByRole("link", { name: "Reportar este caso" }).click();
+
+  await expect(page).toHaveURL(/\/report\/nuevo$/);
+  await expect(
+    page.getByRole("heading", { name: "Reportar un mensaje sospechoso" }),
+  ).toBeVisible();
+  await expect(page.getByText("Paso 1 de 3", { exact: true })).toBeVisible();
+});
+
+test("el asistente valida cada paso antes de avanzar", async ({ page }) => {
+  await page.goto("/report/nuevo");
+
+  await page.getByRole("button", { name: "Continuar al paso 2" }).click();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Cuéntanos brevemente qué pasó" }),
+  ).toBeVisible();
+  await expect(page.getByText("Paso 1 de 3", { exact: true })).toBeVisible();
+
+  await page.getByLabel("Mensaje que recibiste").fill("Recibí un mensaje sospechoso.");
+  await page.getByRole("button", { name: "Continuar al paso 2" }).click();
+  await expect(page.getByText("Paso 2 de 3", { exact: true })).toBeVisible();
+
+  await page.getByLabel("Enlace que quieres reportar").fill("javascript:alert(1)");
+  await page.getByRole("button", { name: "Continuar al paso 3" }).click();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Revisa el enlace" }),
+  ).toBeVisible();
+
+  await page
+    .getByLabel("Enlace que quieres reportar")
+    .fill("https://ejemplo.com/acceso");
+  await page.getByRole("button", { name: "Continuar al paso 3" }).click();
+  await expect(page.getByText("Paso 3 de 3", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText("verificación simulada", { exact: false }),
+  ).toBeVisible();
+});
+
+test("muestra avisos de privacidad y permite continuar sin evidencia ni contacto", async ({
+  page,
+}) => {
+  await page.goto("/report/nuevo");
+
+  await expect(
+    page.getByText("Evita escribir contraseñas, códigos o datos bancarios."),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Grabar audio (próximamente)" }),
+  ).toBeDisabled();
+
+  await page
+    .getByLabel("Mensaje que recibiste")
+    .fill("Me enviaron un enlace para verificar mi cuenta.");
+  await page.getByRole("button", { name: "Continuar al paso 2" }).click();
+
+  await expect(
+    page.getByRole("heading", {
+      name: "¿Tienes una foto o captura del mensaje? Súbela aquí",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/puedes continuar al paso 3 sin problema/),
+  ).toBeVisible();
+  await expect(page.getByText(/Archivo elegido/)).toHaveCount(0);
+
+  await page.getByLabel("¿Dónde lo viste?").selectOption("link");
+  await page
+    .getByLabel("Enlace que quieres reportar")
+    .fill("https://ejemplo.com/verificar");
+  await page.getByRole("button", { name: "Continuar al paso 3" }).click();
+
+  await expect(
+    page.getByRole("heading", {
+      name: "¿Cómo podemos contactarte o identificar el caso?",
+    }),
+  ).toBeVisible();
+  await expect(page.getByText(/Este dato no es obligatorio/)).toBeVisible();
+  await expect(page.getByText("Sin contacto")).toBeVisible();
+
+  await page
+    .getByLabel(/Entiendo que este reporte es una demostración/)
+    .check();
+  await page.getByLabel(/No soy un robot/).check();
+  await page.getByRole("button", { name: "Enviar reporte" }).click();
+
+  await expect(
+    page.getByRole("heading", {
+      name: "¡Listo! Ya recibimos tu reporte. Ya puedes cerrar esta ventana",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "Demostración: este reporte todavía no se envía a un servidor.",
+    ),
+  ).toBeVisible();
+});
+
+test("completa el reporte con contacto opcional y muestra la confirmación", async ({
+  page,
+}) => {
+  await page.goto("/report/nuevo");
+
+  await page
+    .getByLabel("Mensaje que recibiste")
+    .fill("Me pidieron mis datos por un enlace.");
+  await page.getByRole("button", { name: "Continuar al paso 2" }).click();
+
+  await page.getByLabel("¿Dónde lo viste?").selectOption("app");
+  await page.getByLabel("Nombre de la aplicación").fill("Mensajería de ejemplo");
+  await page.getByRole("button", { name: "Continuar al paso 3" }).click();
+
+  await page
+    .getByLabel("Correo o teléfono (opcional)")
+    .fill("abuela@ejemplo.com");
+  await expect(page.getByText("abuela@ejemplo.com")).toBeVisible();
+
+  await page.getByRole("button", { name: "Enviar reporte" }).click();
+  await expect(
+    page
+      .getByRole("alert")
+      .filter({ hasText: "Marca el consentimiento y la verificación simulada" }),
+  ).toBeVisible();
+
+  await page
+    .getByLabel(/Entiendo que este reporte es una demostración/)
+    .check();
+  await page.getByLabel(/No soy un robot/).check();
+  await page.getByRole("button", { name: "Enviar reporte" }).click();
+
+  await expect(
+    page.getByRole("heading", {
+      name: "¡Listo! Ya recibimos tu reporte. Ya puedes cerrar esta ventana",
+    }),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Volver al inicio" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Hacer otro reporte" }).click();
+  await expect(page.getByText("Paso 1 de 3", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Mensaje que recibiste")).toHaveValue("");
+});
+
+test("Volver atrás conserva lo que la persona escribió", async ({ page }) => {
+  await page.goto("/report/nuevo");
+
+  const message = page.getByLabel("Mensaje que recibiste");
+  await message.fill("Quiero corregir este relato.");
+  await page.getByRole("button", { name: "Continuar al paso 2" }).click();
+  await page.getByRole("button", { name: "Volver atrás" }).click();
+
+  await expect(page.getByText("Paso 1 de 3", { exact: true })).toBeVisible();
+  await expect(message).toHaveValue("Quiero corregir este relato.");
 });
